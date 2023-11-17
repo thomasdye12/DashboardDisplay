@@ -1,0 +1,188 @@
+html, body {
+    height: 100%;
+    /*  virable for forgound colour */
+    --forground: #ffffff;
+  }
+  
+  body {
+    background: #313958;
+    /* background: radial-gradient(ellipse at center, #00c8ff 0%, #f10606 70%); */
+    background-size: 100%;
+  }
+  
+  p {
+    margin: 0;
+    padding: 0;
+  }
+  .clock {
+    width: 100vw;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: left;
+    align-items: center;
+    align-content: center;
+    height: 15vh;
+}
+  #clock1 {
+    /* padding-left: 50px; */
+    font-family: 'Inter', sans-serif;
+    color: var(--forground);
+    text-align: left;
+    position: absolute;
+    /* left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%); */
+    /* color: #daf6ff; */
+    /* text-shadow: 0 0 20px #0aafe6, 0 0 20px rgba(10, 175, 230, 0); */
+  }
+  #clock1 .time {
+    letter-spacing: 0.05em;
+    font-size: 80px;
+    padding: 5px 0;
+  }
+  #clock1 .date {
+    letter-spacing: 0.2em;
+    font-size: 50px;
+  }
+
+#calendar {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 2fr)); /* Adjust column width as needed */
+    grid-gap: 10px; /* Adjust as needed for spacing between cells */
+    /* display: flex;
+    flex-wrap: wrap;
+    gap: 10px; */
+    justify-content: flex-start;
+    align-items: flex-start;
+    color: var(--forground);
+    /*  set the amount on a single row */
+    width: calc(13.75% * 7 + 10px * 6);
+}
+
+.weekdays {
+
+    /* justify-content: space-between; */
+
+    /* gap: 10px; */
+    text-align: center;
+    /* width: calc(13.75% * 7 + 10px * 6); */
+    /* padding: 10px; */
+    /* background-color: #eee; */
+}
+.weekdays-text {
+    /* width: calc(13.75% - 10px); */
+    border: 1px solid #ccc;
+}
+
+.calendar-day {
+  
+    /* width: calc(13.75% - 10px); */
+    border: 1px solid #ccc;
+    text-align: left;
+    display: block;
+    position: relative;
+    height: 200px;
+    /* rouned corner */
+    border-radius: 10px;
+
+}
+.calendar-day.today .date {
+    color: red;
+}
+.calendar-day .title {
+    z-index: 1;
+    /* top: 5px;
+    left: 5px; */
+    position: absolute;
+}
+
+.red-circleAlways {
+    z-index: 0; 
+    display: flex;
+    width: 40px;
+    height: 40px;
+
+    border-radius: 50%;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    justify-content: center; /* Horizontally center the item */
+    align-items: center; /* Vertically center the item */
+    font-size: 30px;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+}
+.red-circle {
+    background-color: red;
+}
+
+
+
+
+
+.event-list {
+    list-style: none; /* Remove default list bullet points */
+    margin: 0;
+    padding: 0;
+    text-align: left; /* Adjust alignment as needed */
+    position: relative;
+    top: 50px;
+    left: 5px;
+    width: 95%;
+}
+
+.event-list li {
+    margin: 5px 0; /* Add spacing between list items */
+    font-size: 10px; /* Adjust font size as needed */
+    color: var(--forground); /* Adjust text color as needed */
+}
+
+.event-item {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+}
+
+.circle {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 10px;
+    /* You can set a default color here */
+}
+
+
+/* Customize the event text styling */
+.event-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    /* color: #333; */
+    white-space: nowrap; /* Prevent text from wrapping */
+    overflow: hidden; /* Hide overflowing text */
+    text-overflow: ellipsis; /* Display an ellipsis (...) for overflowing text */
+}
+
+/* custom colours for calander */
+
+.orange-circle {
+    background-color: orange;
+}
+.green-circle {
+    background-color: green;
+}
+.blue-circle {
+    background-color: blue;
+}
+.yellow-circle {
+    background-color: yellow;
+}
+.purple-circle {
+    background-color: purple;
+}
+.red-circle {
+    background-color: red;
+}
+.AllDay-class {
+    background-color: #868686;
+}
