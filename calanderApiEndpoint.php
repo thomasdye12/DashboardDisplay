@@ -14,6 +14,7 @@ $dt->setTime(0, 0, 0);
 $dt = $dt->format('Y-m-d');
 $eventsOnDate = [];
 include_once 'cal/ICal.php';
+include_once "FilterCalander.php";
 use ICal\ICal;
 //  going to use redis to cash the calander data to reduce the number of calls to the calander server
 $redis_Storage = new Redis();
@@ -63,6 +64,7 @@ foreach ($calendars as $calendar) {
         $redis_Storage->set("Calander:".$calendar["name"], serialize($ical), 60 * 60 * 10);
 
     } else {
+        
         //  if it is in redis then get it
         // $ical = $redis_Storage->get("Calander:".$calendar["name"]);
         //  get the php serialised data
@@ -76,18 +78,30 @@ foreach ($calendars as $calendar) {
         // "dtstart": "20231118",
         // "dtend": "20231119",
         // work out if its an all day event based on if there is a T and time 
+      
+        // format the date to be more readable
+        $event['dtstartf'] = date('H:i', strtotime($event['dtstart']));
+        $event['dtendf'] = date('H:i', strtotime($event['dtend']));
+        // create summery with date of start time 
+
         if (strpos($event['dtstart'], 'T') !== false) {
             $event['isAllDay'] = false;
+            $event['summary1'] = $event['dtstartf'] . " - " . $event['summary'];
         } else {
             $event['isAllDay'] = true;
+            $event['summary1'] = $event['summary'];
         }
+        if (FilterCalanderByInfo($event)) {
+  
         $eventsOnDate[] = $event;
+        }
     }
 }
 // sort events by start time
 usort($eventsOnDate, function ($a, $b) {
     return $a['dtstart'] <=> $b['dtstart'];
 });
+
 
 
 echo json_encode($eventsOnDate, JSON_PRETTY_PRINT);

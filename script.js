@@ -25,7 +25,7 @@ function updateTime() {
     var monthName = monthNames[cd.getMonth()];
 
     clock.time = zeroPadding(cd.getHours(), 2) + ':' + zeroPadding(cd.getMinutes(), 2) + ':' + zeroPadding(cd.getSeconds(), 2);
-    clock.date = dayName + ','+ monthName + ' ' + zeroPadding(cd.getDate(), 2);
+    clock.date = dayName + ',' + monthName + ' ' + zeroPadding(cd.getDate(), 2);
 }
 
 function zeroPadding(num, digit) {
@@ -37,16 +37,17 @@ function zeroPadding(num, digit) {
 }
 
 var calendar = new Vue({
-    el: '#calendar',
+    el: '#calendar-wrapper',
     data: {
-        days: []
+        days: [],
+        today: []
     },
     mounted() {
         this.generateCalendar();
         // Schedule your function to run every 40 minutes (40 * 60 * 1000 milliseconds) 40 * 60 * 1000
         this.intervalId = setInterval(() => {
             this.generateCalendar();
-        }, 40 * 60 * 1000);
+        }, 60 * 60 * 1000);
 
     },
     beforeDestroy() {
@@ -63,20 +64,31 @@ var calendar = new Vue({
             firstDayOfNextWeek.setDate(currentDate.getDate() - currentDate.getDay() + 8); // First day of the next week (Monday)
 
             // Generate calendar for the current week and the next 4 weeks
-            for (let week = 0; week < 6; week++) {
+            for (let week = 0; week < 4; week++) {
                 for (let day = 0; day < 7; day++) {
                     const currentDate = new Date(firstDayOfCurrentWeek);
                     currentDate.setDate(currentDate.getDate() + (week * 7) + day);
                     const isToday = currentDate.toDateString() === new Date().toDateString();
-
+                    const isCurrentMonth = currentDate.getMonth() === firstDayOfCurrentWeek.getMonth();
                     // Make an API request to get events for the current date using fetch
                     const events = await this.getEventsForDate(currentDate); // Assuming you have a getEventsForDate function
-
+                    var title = currentDate.getDate();
+                    var month = '';
+                    //  if month is not current and day is 1 then add month name
+                    if (!isCurrentMonth && title == 1) {
+                        month = currentDate.toLocaleString('default', { month: 'short' });
+                    } else if (isCurrentMonth && week == 0 && day == 0) {
+                        month = currentDate.toLocaleString('default', { month: 'short' });
+                    }
                     this.days.push({
                         isToday: isToday,
-                        title: currentDate.getDate(),
+                        month: month,
+                        title: title,
                         events: events // Add events data to the day object
                     });
+                    if (isToday) {
+                        this.today = this.days[this.days.length - 1];
+                    }
                 }
             }
         },
@@ -115,5 +127,49 @@ var calendar = new Vue({
 
     }
 });
+
+
+
+var weather = new Vue({
+    el: '#weather',
+    data: {
+        WeatherData:[]
+    },
+    mounted() {
+        this.getWeather();
+        // Schedule your function to run every 40 minutes (40 * 60 * 1000 milliseconds) 40 * 60 * 1000
+        this.intervalId = setInterval(() => {
+            this.getWeather();
+        }, 60 * 60 * 1000);
+
+    },
+    beforeDestroy() {
+        // Clean up the interval when the Vue instance is destroyed
+        clearInterval(this.intervalId);
+    },
+    methods: {
+        async getWeather() {
+            try {
+                this.WeatherData = [];
+                // Make an API request to fetch events for the given date using fetch
+                const response = await fetch(`WeatherApi.php`); // Adjust the API endpoint and query parameters accordingly
+
+                if (response.ok) {
+                    const data = await response.json();
+                    // loop over the data. Appleweatherdata.forecastHourly.hours
+                    this.WeatherData = data.Appleweatherdata.forecastHourly.hours;
+                } else {
+                    console.error('Error fetching weather:', response.status, response.statusText);
+                    return []; // Return an empty array in case of an error
+                }
+            } catch (error) {
+                console.error('Error fetching weather:', error);
+                return []; // Return an empty array in case of an error
+            }
+        }
+    }
+});
+
+
 
 

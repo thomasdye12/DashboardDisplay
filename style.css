@@ -2,13 +2,30 @@ html, body {
     height: 100%;
     /*  virable for forgound colour */
     --forground: #ffffff;
+
+    
+    
   }
   
   body {
-    background: #313958;
+    /*  set background image url */
+    background-image: url("images/london2.jpeg");
+    /* add tint */
+    /* background: #313958; */
     /* background: radial-gradient(ellipse at center, #00c8ff 0%, #f10606 70%); */
     background-size: 100%;
+    background-size: cover;
+    background-position: center;
   }
+  .overlay {
+    z-index: 0;
+    background-color: rgba(0, 0, 0, 0.8); /* Adjust the opacity (last value) as needed */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
   
   p {
     margin: 0;
@@ -22,7 +39,7 @@ html, body {
     justify-content: left;
     align-items: center;
     align-content: center;
-    height: 15vh;
+    height: 10vh;
 }
   #clock1 {
     /* padding-left: 50px; */
@@ -48,7 +65,7 @@ html, body {
 
 #calendar {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 2fr)); /* Adjust column width as needed */
+    grid-template-columns: repeat(auto-fill, minmax(126px, 2fr)); /* Adjust column width as needed */
     grid-gap: 10px; /* Adjust as needed for spacing between cells */
     /* display: flex;
     flex-wrap: wrap;
@@ -56,8 +73,9 @@ html, body {
     justify-content: flex-start;
     align-items: flex-start;
     color: var(--forground);
+    padding-top: 10px;
     /*  set the amount on a single row */
-    width: calc(13.75% * 7 + 10px * 6);
+    /* width: calc(13.75% * 7 + 10px * 6); */
 }
 
 .weekdays {
@@ -69,20 +87,33 @@ html, body {
     /* width: calc(13.75% * 7 + 10px * 6); */
     /* padding: 10px; */
     /* background-color: #eee; */
+    color: var(--forground);
 }
 .weekdays-text {
     /* width: calc(13.75% - 10px); */
-    border: 1px solid #ccc;
+    border: 1px solid var(--forground);
 }
 
 .calendar-day {
   
     /* width: calc(13.75% - 10px); */
-    border: 1px solid #ccc;
+    border: 1px solid var(--forground);
     text-align: left;
     display: block;
     position: relative;
     height: 200px;
+    /* rouned corner */
+    border-radius: 10px;
+
+}
+.calendar-today {
+  
+    /* width: calc(13.75% - 10px); */
+    border: 1px solid var(--forground);
+    text-align: left;
+    display: block;
+    position: relative;
+    height: 120px;
     /* rouned corner */
     border-radius: 10px;
 
@@ -96,7 +127,19 @@ html, body {
     left: 5px; */
     position: absolute;
 }
-
+.calendar-today .title {
+    z-index: 1;
+    /* top: 5px;
+    left: 5px; */
+    color: var(--forground);
+    position: absolute;
+    font-size: 28px;
+    font-family: 'Inter', sans-serif;
+}
+.calendar-today .event-list {
+    top: 0px;
+    left: 5px;
+}
 .red-circleAlways {
     z-index: 0; 
     display: flex;
@@ -109,9 +152,18 @@ html, body {
     right: 5px;
     justify-content: center; /* Horizontally center the item */
     align-items: center; /* Vertically center the item */
-    font-size: 30px;
+    font-size: 28px;
     font-family: 'Inter', sans-serif;
     margin: 0;
+}
+.title-month {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    font-size: 28px;
+    font-family: 'Inter', sans-serif;
+    top: 5px;
+    left: 5px;
 }
 .red-circle {
     background-color: red;
@@ -185,4 +237,31 @@ html, body {
 }
 .AllDay-class {
     background-color: #868686;
+}
+
+.weather {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    align-items: center;
+    align-content: center;
+    height: 12vh;
+    width: 100vw;
+    color: var(--forground);
+    /* background-color: #868686; */
+    /* background-color: #868686; */
+    /* background-color: #868686; */
+
+
+}
+.weather-time {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    /* padding: 5px 0; */
+    /* background-color: #868686; */
+    /* background-color: #868686; */
+    /* background-color: #868686; */
 }
