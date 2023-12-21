@@ -19,6 +19,7 @@
         <div class=clock1 id="clock1">
             <p class="time">{{ time }}</p>
             <p class="date">{{ date }}</p>
+            <p class="Quote">{{ quote }}</p>
         </div>
     </div>
     <!-- weather info -->
@@ -36,7 +37,7 @@
         <div class="calendar-today" id="calander-today">
             <!-- <p class="title">{{ today.title }}</p> -->
             <ul class="event-list">
-                <li class="event-item" :class="{ 'AllDay-class': event.calendar.colour === 'red' && event.isAllDay}" v-for="(event, index) in today.events" :key="index">
+                <li class="event-item" :class="{ 'AllDay-class': event.isAllDay == true }" v-for="(event, index) in today.events" :key="index">
                     <div class="circle" :class="getCircleColorClass(event.calendar.colour)"></div>
                     <p class="event-text">{{ event.summary1 }}</p>
                 </li>

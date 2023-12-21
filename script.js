@@ -4,7 +4,8 @@ var clock = new Vue({
     el: '#clock1',
     data: {
         time: '',
-        date: ''
+        date: '',
+        quote: 'Loading Down'
     }
 });
 
@@ -35,6 +36,28 @@ function zeroPadding(num, digit) {
     }
     return (zero + num).slice(-digit);
 }
+//  add code here to get quote of the day
+// QuoteOfTheDay.php
+function  LoadQuote() {
+    fetch('QuoteOfTheDay.php')
+        .then(response => response.json())
+        .then(data => {
+            clock.quote = data.Quote;
+        });
+}
+LoadQuote();
+this.intervalIdLoadQuote = setInterval(() => {
+    var cd = new Date();
+    //  only at 1 min pas midnight
+    if (cd.getHours() == 0 && cd.getMinutes() == 1) {
+        LoadQuote();
+    }
+}, 60 * 1000);
+
+
+
+
+
 
 var calendar = new Vue({
     el: '#calendar-wrapper',
@@ -62,6 +85,11 @@ var calendar = new Vue({
             const firstDayOfNextWeek = new Date(currentDate);
             firstDayOfCurrentWeek.setDate(currentDate.getDate() - currentDate.getDay() + 1); // First day of the current week (Monday)
             firstDayOfNextWeek.setDate(currentDate.getDate() - currentDate.getDay() + 8); // First day of the next week (Monday)
+            // seems to be an issue with sunday 
+            if (currentDate.getDay() == 0) {
+                firstDayOfCurrentWeek.setDate(currentDate.getDate() - currentDate.getDay() - 6); // First day of the current week (Monday)
+                firstDayOfNextWeek.setDate(currentDate.getDate() - currentDate.getDay() + 7); // First day of the next week (Monday)
+            }
 
             // Generate calendar for the current week and the next 4 weeks
             for (let week = 0; week < 4; week++) {
@@ -138,9 +166,16 @@ var weather = new Vue({
     mounted() {
         this.getWeather();
         // Schedule your function to run every 40 minutes (40 * 60 * 1000 milliseconds) 40 * 60 * 1000
+        // this.intervalId = setInterval(() => {
+        //     this.getWeather();
+        // }, 60 * 60 * 1000);
+        // at 1 minute past every hour update the weather
         this.intervalId = setInterval(() => {
-            this.getWeather();
-        }, 60 * 60 * 1000);
+            var cd = new Date();
+            if (cd.getMinutes() == 1) {
+                this.getWeather();
+            }
+        }, 60 * 1000);
 
     },
     beforeDestroy() {
@@ -184,7 +219,7 @@ var PersonMaps = new Vue({
         // Schedule your function to run every 40 minutes (40 * 60 * 1000 milliseconds) 40 * 60 * 1000
         this.intervalId = setInterval(() => {
             this.UpdateView();
-        }, 2 * 60 * 1000);
+        }, 6 * 60 * 1000);
 
     },
     beforeDestroy() {
@@ -248,8 +283,16 @@ var PersonMaps = new Vue({
                         if (oldData.Location.Location.latitude == element.Location.Location.latitude && oldData.Location.Location.longitude == element.Location.Location.longitude) {
                             return;
                         }
+                        mapkit.init({
+                            authorizationCallback: function (done) {
+                                done(data.JWT);
+                            }
+                        });
                         // update the map
                         UpdateMapData(oldData, element, data.localisedAddress);
+                        // update the data
+                        oldData.Location.Location.latitude = element.Location.Location.latitude;
+                        oldData.Location.Location.longitude = element.Location.Location.longitude;
                         
                     });
 
@@ -281,8 +324,16 @@ function ShowMapForUser(element,localisedNames) {
         workAnnotation.subtitle =LocaliseNames(data.results[0].name,localisedNames);
         console.log(data.results[0]);
     });
+    if (element.imageurl) {
+    const imageDelegate = {
+        getImageUrl(scale, callback) {
+            callback(element.imageurl);
+        }
+    };
+    workAnnotation.glyphImage = imageDelegate;
+}
     var newCenter = workAnnotation.coordinate;
-    var span = new mapkit.CoordinateSpan(.000001);
+    var span = new mapkit.CoordinateSpan(.01);
     var region = new mapkit.CoordinateRegion(newCenter, span);
     map.setRegionAnimated(region)
 
@@ -293,6 +344,7 @@ function ShowMapForUser(element,localisedNames) {
 
 function UpdateMapData(OldData, NewData,localisedNames) {
     var map = OldData.map;
+    map.removeAnnotations(map.annotations);
     var workAnnotation = new mapkit.MarkerAnnotation(new mapkit.Coordinate(NewData.Location.Location.latitude, NewData.Location.Location.longitude));
     workAnnotation.color = NewData.color;
     workAnnotation.title = NewData.name;   //+ " \n "  + element.Location.formattedTime;
@@ -305,6 +357,14 @@ function UpdateMapData(OldData, NewData,localisedNames) {
         workAnnotation.subtitle = LocaliseNames(data.results[0].name,localisedNames);
         console.log(data.results[0]);
     });
+    if (NewData.imageurl) {
+        const imageDelegate = {
+            getImageUrl(scale, callback) {
+                callback(NewData.imageurl);
+            }
+        };
+        workAnnotation.glyphImage = imageDelegate;
+    }
     var newCenter = workAnnotation.coordinate;
     var span = new mapkit.CoordinateSpan(.000001);
     var region = new mapkit.CoordinateRegion(newCenter, span);

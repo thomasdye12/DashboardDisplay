@@ -635,6 +635,7 @@ class ICal
         $lines = $this->unfold($lines);
 
         if (stristr($lines[0], 'BEGIN:VCALENDAR') !== false) {
+
             $component = '';
             foreach ($lines as $line) {
                 $line = rtrim($line); // Trim trailing whitespace
@@ -2654,6 +2655,7 @@ class ICal
         }
 
         if (empty($this->httpUserAgent)) {
+            $options['http']['header'][] = "User-Agent: TDS";
             if (mb_stripos($filename, 'outlook.office365.com') !== false) {
                 $options['http']['header'][] = 'User-Agent: A User Agent';
             }
@@ -2667,13 +2669,30 @@ class ICal
 
         $options['http']['header'][] = 'Connection: close';
 
-        $context = stream_context_create($options);
+        // $context = stream_context_create($options);
 
-        // phpcs:ignore CustomPHPCS.ControlStructures.AssignmentInCondition
-        if (($lines = file($filename, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES, $context)) === false) {
-            throw new \Exception("The file path or URL '{$filename}' does not exist.");
-        }
+        // // phpcs:ignore CustomPHPCS.ControlStructures.AssignmentInCondition
+        // if (($lines = file($filename, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES, $context)) === false) {
+        //     throw new \Exception("The file path or URL '{$filename}' does not exist.");
+        // }
 
+        // use curl instead of stream_context_create
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $filename);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $options['http']['header']);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        // follow redirects
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_ENCODING, '');
+        $lines = curl_exec($ch);
+        curl_close($ch);
+        // echo $filename;
+        // echo print_r($lines, true);
+        // break by line
+        $lines = explode("\n", $lines);
+        // echo print_r($lines, true);
         return $lines;
     }
 

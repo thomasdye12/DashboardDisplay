@@ -61,7 +61,7 @@ foreach ($calendars as $calendar) {
         // store the calander data in redis
         // $redis_Storage->set("Calander:".$calendar["name"], $ical, 60 * 60 * 10);
         //  stoe as php serialised data
-        $redis_Storage->set("Calander:".$calendar["name"], serialize($ical), 60 * 60 * 10);
+        $redis_Storage->set("Calander:".$calendar["name"], serialize($ical), 10 * 60);
 
     } else {
         
@@ -82,18 +82,26 @@ foreach ($calendars as $calendar) {
         // format the date to be more readable
         $event['dtstartf'] = date('H:i', strtotime($event['dtstart']));
         $event['dtendf'] = date('H:i', strtotime($event['dtend']));
+        $filtertype = FilterCalanderByInfo($event);
         // create summery with date of start time 
+        if ($filtertype == "redacted") {
+            // remove all summary to make it say its redacted
+            $event['summary'] = "Redacted";
+      
+        }
 
-        if (strpos($event['dtstart'], 'T') !== false) {
+        if (strpos($event['dtstart'], 'T') !== false && !strpos($event['dtstart'], 'T000000') !== false) {
             $event['isAllDay'] = false;
             $event['summary1'] = $event['dtstartf'] . " - " . $event['summary'];
         } else {
             $event['isAllDay'] = true;
             $event['summary1'] = $event['summary'];
         }
-        if (FilterCalanderByInfo($event)) {
-  
-        $eventsOnDate[] = $event;
+
+
+      
+        if ($filtertype != "false") {
+            $eventsOnDate[] = $event;
         }
     }
 }
@@ -101,6 +109,7 @@ foreach ($calendars as $calendar) {
 usort($eventsOnDate, function ($a, $b) {
     return $a['dtstart'] <=> $b['dtstart'];
 });
+//
 
 
 
