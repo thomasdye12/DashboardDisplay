@@ -70,7 +70,7 @@ var calendar = new Vue({
         // Schedule your function to run every 40 minutes (40 * 60 * 1000 milliseconds) 40 * 60 * 1000
         this.intervalId = setInterval(() => {
             this.generateCalendar();
-        }, 60 * 60 * 1000);
+        }, 1 * 60 * 60 * 1000);
 
     },
     beforeDestroy() {
@@ -83,14 +83,13 @@ var calendar = new Vue({
             const currentDate = new Date();
             const firstDayOfCurrentWeek = new Date(currentDate);
             const firstDayOfNextWeek = new Date(currentDate);
-            firstDayOfCurrentWeek.setDate(currentDate.getDate() - currentDate.getDay() + 1); // First day of the current week (Monday)
-            firstDayOfNextWeek.setDate(currentDate.getDate() - currentDate.getDay() + 8); // First day of the next week (Monday)
-            // seems to be an issue with sunday 
-            if (currentDate.getDay() == 0) {
-                firstDayOfCurrentWeek.setDate(currentDate.getDate() - currentDate.getDay() - 6); // First day of the current week (Monday)
-                firstDayOfNextWeek.setDate(currentDate.getDate() - currentDate.getDay() + 7); // First day of the next week (Monday)
-            }
-
+            
+            // Set the first day of the current week (Monday)
+            firstDayOfCurrentWeek.setDate(currentDate.getDate() - (currentDate.getDay() + 6) % 7);
+            
+            // Set the first day of the next week (Monday)
+            firstDayOfNextWeek.setDate(firstDayOfCurrentWeek.getDate() + 7);
+        
             // Generate calendar for the current week and the next 4 weeks
             for (let week = 0; week < 4; week++) {
                 for (let day = 0; day < 7; day++) {
@@ -120,6 +119,7 @@ var calendar = new Vue({
                 }
             }
         },
+        
         async getEventsForDate(date) {
             try {
                 // Make an API request to fetch events for the given date using fetch
@@ -219,7 +219,7 @@ var PersonMaps = new Vue({
         // Schedule your function to run every 40 minutes (40 * 60 * 1000 milliseconds) 40 * 60 * 1000
         this.intervalId = setInterval(() => {
             this.UpdateView();
-        }, 6 * 60 * 1000);
+        }, 15 * 60 * 1000);
 
     },
     beforeDestroy() {
@@ -366,7 +366,7 @@ function UpdateMapData(OldData, NewData,localisedNames) {
         workAnnotation.glyphImage = imageDelegate;
     }
     var newCenter = workAnnotation.coordinate;
-    var span = new mapkit.CoordinateSpan(.000001);
+    var span = new mapkit.CoordinateSpan(.01);
     var region = new mapkit.CoordinateRegion(newCenter, span);
     map.setRegionAnimated(region)
 

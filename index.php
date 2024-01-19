@@ -19,7 +19,6 @@
         <div class=clock1 id="clock1">
             <p class="time">{{ time }}</p>
             <p class="date">{{ date }}</p>
-            <p class="Quote">{{ quote }}</p>
         </div>
     </div>
     <!-- weather info -->

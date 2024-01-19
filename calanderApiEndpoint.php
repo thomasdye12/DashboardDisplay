@@ -15,6 +15,7 @@ $dt = $dt->format('Y-m-d');
 $eventsOnDate = [];
 include_once 'cal/ICal.php';
 include_once "FilterCalander.php";
+include_once "TDSDocscalander.php";
 use ICal\ICal;
 //  going to use redis to cash the calander data to reduce the number of calls to the calander server
 $redis_Storage = new Redis();
@@ -98,6 +99,18 @@ foreach ($calendars as $calendar) {
             $event['summary1'] = $event['summary'];
         }
 
+        // find TDS docs event if it has the docs url in it 
+        $event['isDocs'] = ContainsDocsUrl($event);
+        if ($event['isDocs']["isDocs"] == true) {
+            $url = TDSDocsURL($event['isDocs']["url"]);
+            $event['isDocs']["ID"] = $url;
+            $event['isDocs']["Doc"] = TDSDocsLookUp($url);
+            if ($event['isDocs']["Doc"]["description"] !== null) {
+                $event['summary1'] = $event["summary1"] . " - Docs:" . $event['isDocs']["Doc"]["description"];
+            }
+
+        }
+
 
       
         if ($filtertype != "false") {
@@ -112,5 +125,19 @@ usort($eventsOnDate, function ($a, $b) {
 //
 
 
-
+// print_r($eventsOnDate);
 echo json_encode($eventsOnDate, JSON_PRETTY_PRINT);
+
+
+
+
+function ContainsDocsUrl($event)
+{
+    if (isset($event['additionalProperties']["url"])) {
+        if (strpos($event['additionalProperties']["url"], 'TDSDocs') !== false) {
+            return array("isDocs" => true, "url" => $event['additionalProperties']["url"]);
+        }
+    }
+
+    return false;
+}
