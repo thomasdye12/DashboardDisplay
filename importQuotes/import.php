@@ -1,7 +1,7 @@
 <?php
 
 require "/Server/app/mongoDBConfig/includes/vendor/autoload.php";
-$connection = new MongoDB\Client("mongodb://main.db.local.thomasdye.net:27018");
+$connection = new MongoDB\Client("");
 $TDShomeServer = $connection->selectDatabase("TDShomeServer");
 $QuotesOftheDay = $TDShomeServer->selectCollection("QuotesOftheDay");
 // for all keys in the db go over them and add a new field called AgeRating
