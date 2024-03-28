@@ -9,7 +9,9 @@ header('Content-Type: application/json');
 $date = $_GET['date'];
 // convert to date with out time
 $dt = new DateTime($date);
+
 $dt->setTime(0, 0, 0);
+// $endDate = $dt -> modify('+1 day');
 // convert back to string
 $dt = $dt->format('Y-m-d');
 $eventsOnDate = [];
@@ -71,7 +73,11 @@ foreach ($calendars as $calendar) {
         //  get the php serialised data
         $ical = unserialize($ical);
     }
+
+    
     $events = $ical->eventsFromRange($dt, $dt);
+    // echo count($events)."\n";
+
     foreach ($events as $event) {
         $event =  (array) $event;
         $event['calendar'] = $calendar;

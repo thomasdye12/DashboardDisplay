@@ -101,9 +101,10 @@ html, body {
     text-align: left;
     display: block;
     position: relative;
-    height: 200px;
+    height: 220px;
     /* rouned corner */
     border-radius: 10px;
+    overflow:hidden;
 
 }
 .calendar-today {
@@ -181,7 +182,7 @@ html, body {
     position: relative;
     top: 50px;
     left: 5px;
-    width: 95%;
+    width: 98%;
 }
 
 .event-list li {
@@ -210,7 +211,7 @@ html, body {
     font-family: 'Inter', sans-serif;
     font-size: 14px;
     /* color: #333; */
-    white-space: nowrap; /* Prevent text from wrapping */
+    white-space: inherit; /* Prevent text from wrapping */
     overflow: hidden; /* Hide overflowing text */
     text-overflow: ellipsis; /* Display an ellipsis (...) for overflowing text */
 }

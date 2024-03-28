@@ -91,7 +91,7 @@ var calendar = new Vue({
             firstDayOfNextWeek.setDate(firstDayOfCurrentWeek.getDate() + 7);
         
             // Generate calendar for the current week and the next 4 weeks
-            for (let week = 0; week < 4; week++) {
+            for (let week = 0; week < 6; week++) {
                 for (let day = 0; day < 7; day++) {
                     const currentDate = new Date(firstDayOfCurrentWeek);
                     currentDate.setDate(currentDate.getDate() + (week * 7) + day);
@@ -209,178 +209,178 @@ var weather = new Vue({
 // define mapkit
 
 
-var PersonMaps = new Vue({
-    el: '#map',
-    data: {
-        Users: []
-    },
-    mounted() {
-        this.getPersonMaps();
-        // Schedule your function to run every 40 minutes (40 * 60 * 1000 milliseconds) 40 * 60 * 1000
-        this.intervalId = setInterval(() => {
-            this.UpdateView();
-        }, 15 * 60 * 1000);
+// var PersonMaps = new Vue({
+//     el: '#map',
+//     data: {
+//         Users: []
+//     },
+//     mounted() {
+//         this.getPersonMaps();
+//         // Schedule your function to run every 40 minutes (40 * 60 * 1000 milliseconds) 40 * 60 * 1000
+//         this.intervalId = setInterval(() => {
+//             this.UpdateView();
+//         }, 15 * 60 * 1000);
 
-    },
-    beforeDestroy() {
-        // Clean up the interval when the Vue instance is destroyed
-        clearInterval(this.intervalId);
-    },
-    methods: {
-        async getPersonMaps() {
-            try {
-                this.personMaps = [];
-                // Make an API request to fetch events for the given date using fetch
-                const response = await fetch(`LocationTrackingapi.php`); // Adjust the API endpoint and query parameters accordingly
+//     },
+//     beforeDestroy() {
+//         // Clean up the interval when the Vue instance is destroyed
+//         clearInterval(this.intervalId);
+//     },
+//     methods: {
+//         async getPersonMaps() {
+//             try {
+//                 this.personMaps = [];
+//                 // Make an API request to fetch events for the given date using fetch
+//                 const response = await fetch(`LocationTrackingapi.php`); // Adjust the API endpoint and query parameters accordingly
 
-                if (response.ok) {
-                    const data = await response.json();
-                    // loop over the data. Appleweatherdata.forecastHourly.hours
-                    this.Users = data.location;
-                    mapkit.init({
-                        authorizationCallback: function (done) {
-                            done(data.JWT);
-                        }
-                    });
-                    // loop over the data.location
-                    // wait 2 seconds 
-                    //     data.location.forEach(element => {
-                    //         ShowMapForUser(mapkit, element.Device, element.Location.Location.latitude, element.Location.Location.longitude);
-                    //   });
-                    // wait 2 seconds before calling again
-                    const self = this;
-                    setTimeout(function () {
-                        self.Users.forEach(element => {
-                            element.map = ShowMapForUser(element, data.localisedAddress);
-                        });
-                    }, 2000);
-                } else {
-                    console.error('Error fetching personMaps:', response.status, response.statusText);
-                    return []; // Return an empty array in case of an error
-                }
-            } catch (error) {
-                console.error('Error fetching personMaps:', error);
-                return []; // Return an empty array in case of an error
-            }
-        }, async UpdateView() {
-            try {
-                this.personMaps = [];
-                // Make an API request to fetch events for the given date using fetch
-                const response = await fetch(`LocationTrackingapi.php`); // Adjust the API endpoint and query parameters accordingly
+//                 if (response.ok) {
+//                     const data = await response.json();
+//                     // loop over the data. Appleweatherdata.forecastHourly.hours
+//                     this.Users = data.location;
+//                     mapkit.init({
+//                         authorizationCallback: function (done) {
+//                             done(data.JWT);
+//                         }
+//                     });
+//                     // loop over the data.location
+//                     // wait 2 seconds 
+//                     //     data.location.forEach(element => {
+//                     //         ShowMapForUser(mapkit, element.Device, element.Location.Location.latitude, element.Location.Location.longitude);
+//                     //   });
+//                     // wait 2 seconds before calling again
+//                     const self = this;
+//                     setTimeout(function () {
+//                         self.Users.forEach(element => {
+//                             element.map = ShowMapForUser(element, data.localisedAddress);
+//                         });
+//                     }, 2000);
+//                 } else {
+//                     console.error('Error fetching personMaps:', response.status, response.statusText);
+//                     return []; // Return an empty array in case of an error
+//                 }
+//             } catch (error) {
+//                 console.error('Error fetching personMaps:', error);
+//                 return []; // Return an empty array in case of an error
+//             }
+//         }, async UpdateView() {
+//             try {
+//                 this.personMaps = [];
+//                 // Make an API request to fetch events for the given date using fetch
+//                 const response = await fetch(`LocationTrackingapi.php`); // Adjust the API endpoint and query parameters accordingly
 
-                if (response.ok) {
-                    const data = await response.json();
-                    // get both the old data and the new data
-                    // loop over the data.location
-                    data.location.forEach(element => {
+//                 if (response.ok) {
+//                     const data = await response.json();
+//                     // get both the old data and the new data
+//                     // loop over the data.location
+//                     data.location.forEach(element => {
                      
-                        //  get the old data
-                        var oldData = this.Users.find(x => x.Device == element.Device);
-                        if (oldData == null) {
-                            return;
-                        }
-                        // if the 2 are the same then do nothing
-                        if (oldData.Location.Location.latitude == element.Location.Location.latitude && oldData.Location.Location.longitude == element.Location.Location.longitude) {
-                            return;
-                        }
-                        mapkit.init({
-                            authorizationCallback: function (done) {
-                                done(data.JWT);
-                            }
-                        });
-                        // update the map
-                        UpdateMapData(oldData, element, data.localisedAddress);
-                        // update the data
-                        oldData.Location.Location.latitude = element.Location.Location.latitude;
-                        oldData.Location.Location.longitude = element.Location.Location.longitude;
+//                         //  get the old data
+//                         var oldData = this.Users.find(x => x.Device == element.Device);
+//                         if (oldData == null) {
+//                             return;
+//                         }
+//                         // if the 2 are the same then do nothing
+//                         if (oldData.Location.Location.latitude == element.Location.Location.latitude && oldData.Location.Location.longitude == element.Location.Location.longitude) {
+//                             return;
+//                         }
+//                         mapkit.init({
+//                             authorizationCallback: function (done) {
+//                                 done(data.JWT);
+//                             }
+//                         });
+//                         // update the map
+//                         UpdateMapData(oldData, element, data.localisedAddress);
+//                         // update the data
+//                         oldData.Location.Location.latitude = element.Location.Location.latitude;
+//                         oldData.Location.Location.longitude = element.Location.Location.longitude;
                         
-                    });
+//                     });
 
-                } else {
-                    console.error('Error fetching personMaps:', response.status, response.statusText);
-                    return []; // Return an empty array in case of an error
-                }
-            } catch (error) {
-                console.error('Error fetching personMaps:', error);
-                return []; // Return an empty array in case of an error
-            }
+//                 } else {
+//                     console.error('Error fetching personMaps:', response.status, response.statusText);
+//                     return []; // Return an empty array in case of an error
+//                 }
+//             } catch (error) {
+//                 console.error('Error fetching personMaps:', error);
+//                 return []; // Return an empty array in case of an error
+//             }
 
-        }
+//         }
 
-    }
-});
+//     }
+// });
 
-function ShowMapForUser(element,localisedNames) {
-    var map = new mapkit.Map(element.Device);
-    var workAnnotation = new mapkit.MarkerAnnotation(new mapkit.Coordinate(element.Location.Location.latitude, element.Location.Location.longitude));
-    workAnnotation.color = element.color;
-    workAnnotation.title = element.name;    //+ " \n "  + element.Location.formattedTime;
-    workAnnotation.subtitle = "persom";
-    workAnnotation.selected = true;
-    map.mapType = "satellite";
-    var geocoder = new mapkit.Geocoder({
-        language: "en-GB"
-    }).reverseLookup(workAnnotation.coordinate, (err, data) => {
-        workAnnotation.subtitle =LocaliseNames(data.results[0].name,localisedNames);
-        console.log(data.results[0]);
-    });
-    if (element.imageurl) {
-    const imageDelegate = {
-        getImageUrl(scale, callback) {
-            callback(element.imageurl);
-        }
-    };
-    workAnnotation.glyphImage = imageDelegate;
-}
-    var newCenter = workAnnotation.coordinate;
-    var span = new mapkit.CoordinateSpan(.01);
-    var region = new mapkit.CoordinateRegion(newCenter, span);
-    map.setRegionAnimated(region)
+// function ShowMapForUser(element,localisedNames) {
+//     var map = new mapkit.Map(element.Device);
+//     var workAnnotation = new mapkit.MarkerAnnotation(new mapkit.Coordinate(element.Location.Location.latitude, element.Location.Location.longitude));
+//     workAnnotation.color = element.color;
+//     workAnnotation.title = element.name;    //+ " \n "  + element.Location.formattedTime;
+//     workAnnotation.subtitle = "persom";
+//     workAnnotation.selected = true;
+//     map.mapType = "satellite";
+//     var geocoder = new mapkit.Geocoder({
+//         language: "en-GB"
+//     }).reverseLookup(workAnnotation.coordinate, (err, data) => {
+//         workAnnotation.subtitle =LocaliseNames(data.results[0].name,localisedNames);
+//         console.log(data.results[0]);
+//     });
+//     if (element.imageurl) {
+//     const imageDelegate = {
+//         getImageUrl(scale, callback) {
+//             callback(element.imageurl);
+//         }
+//     };
+//     workAnnotation.glyphImage = imageDelegate;
+// }
+//     var newCenter = workAnnotation.coordinate;
+//     var span = new mapkit.CoordinateSpan(.01);
+//     var region = new mapkit.CoordinateRegion(newCenter, span);
+//     map.setRegionAnimated(region)
 
-    map.showItems([workAnnotation]);
-    return map;
-}
+//     map.showItems([workAnnotation]);
+//     return map;
+// }
 
 
-function UpdateMapData(OldData, NewData,localisedNames) {
-    var map = OldData.map;
-    map.removeAnnotations(map.annotations);
-    var workAnnotation = new mapkit.MarkerAnnotation(new mapkit.Coordinate(NewData.Location.Location.latitude, NewData.Location.Location.longitude));
-    workAnnotation.color = NewData.color;
-    workAnnotation.title = NewData.name;   //+ " \n "  + element.Location.formattedTime;
-    workAnnotation.subtitle = "";
-    workAnnotation.selected = true;
-    map.mapType = "satellite";
-    var geocoder = new mapkit.Geocoder({
-        language: "en-GB"
-    }).reverseLookup(workAnnotation.coordinate, (err, data) => {
-        workAnnotation.subtitle = LocaliseNames(data.results[0].name,localisedNames);
-        console.log(data.results[0]);
-    });
-    if (NewData.imageurl) {
-        const imageDelegate = {
-            getImageUrl(scale, callback) {
-                callback(NewData.imageurl);
-            }
-        };
-        workAnnotation.glyphImage = imageDelegate;
-    }
-    var newCenter = workAnnotation.coordinate;
-    var span = new mapkit.CoordinateSpan(.01);
-    var region = new mapkit.CoordinateRegion(newCenter, span);
-    map.setRegionAnimated(region)
+// function UpdateMapData(OldData, NewData,localisedNames) {
+//     var map = OldData.map;
+//     map.removeAnnotations(map.annotations);
+//     var workAnnotation = new mapkit.MarkerAnnotation(new mapkit.Coordinate(NewData.Location.Location.latitude, NewData.Location.Location.longitude));
+//     workAnnotation.color = NewData.color;
+//     workAnnotation.title = NewData.name;   //+ " \n "  + element.Location.formattedTime;
+//     workAnnotation.subtitle = "";
+//     workAnnotation.selected = true;
+//     map.mapType = "satellite";
+//     var geocoder = new mapkit.Geocoder({
+//         language: "en-GB"
+//     }).reverseLookup(workAnnotation.coordinate, (err, data) => {
+//         workAnnotation.subtitle = LocaliseNames(data.results[0].name,localisedNames);
+//         console.log(data.results[0]);
+//     });
+//     if (NewData.imageurl) {
+//         const imageDelegate = {
+//             getImageUrl(scale, callback) {
+//                 callback(NewData.imageurl);
+//             }
+//         };
+//         workAnnotation.glyphImage = imageDelegate;
+//     }
+//     var newCenter = workAnnotation.coordinate;
+//     var span = new mapkit.CoordinateSpan(.01);
+//     var region = new mapkit.CoordinateRegion(newCenter, span);
+//     map.setRegionAnimated(region)
 
-    map.showItems([workAnnotation]);
-    return map;
-}
+//     map.showItems([workAnnotation]);
+//     return map;
+// }
 
-function LocaliseNames(name,localisedNames) {
-    // if the name is one of the localised names then return the localised name
-    // else return the name
-    var localisedName = localisedNames.find(x => x.name == name);
-    if (localisedName == null) {
-        return name;
-    }
-    return localisedName.localisedName;
+// function LocaliseNames(name,localisedNames) {
+//     // if the name is one of the localised names then return the localised name
+//     // else return the name
+//     var localisedName = localisedNames.find(x => x.name == name);
+//     if (localisedName == null) {
+//         return name;
+//     }
+//     return localisedName.localisedName;
 
-}
+// }

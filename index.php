@@ -77,14 +77,14 @@
 
         </div>
     </div>
-    <!-- locaton map of users -->
+    <!-- locaton map of users
      <div class="mapOverview" id="map">
      <div v-for="User in Users" class="map-Person">
         <div class="map-PersonsMap" :id="User.Device">
         </div>
 
      </div>
-    </div>
+    </div> -->
 
 
    
