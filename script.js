@@ -36,23 +36,6 @@ function zeroPadding(num, digit) {
     }
     return (zero + num).slice(-digit);
 }
-//  add code here to get quote of the day
-// QuoteOfTheDay.php
-function  LoadQuote() {
-    fetch('QuoteOfTheDay.php')
-        .then(response => response.json())
-        .then(data => {
-            clock.quote = data.Quote;
-        });
-}
-LoadQuote();
-this.intervalIdLoadQuote = setInterval(() => {
-    var cd = new Date();
-    //  only at 1 min pas midnight
-    if (cd.getHours() == 0 && cd.getMinutes() == 1) {
-        LoadQuote();
-    }
-}, 60 * 1000);
 
 
 
@@ -70,7 +53,9 @@ var calendar = new Vue({
         // Schedule your function to run every 40 minutes (40 * 60 * 1000 milliseconds) 40 * 60 * 1000
         this.intervalId = setInterval(() => {
             this.generateCalendar();
-        }, 1 * 60 * 60 * 1000);
+        },1 * 60 * 60 * 1000);
+
+        //  1 * 60 * 60 * 1000
 
     },
     beforeDestroy() {
@@ -79,7 +64,6 @@ var calendar = new Vue({
     },
     methods: {
         async generateCalendar() {
-            this.days = [];
             const currentDate = new Date();
             const firstDayOfCurrentWeek = new Date(currentDate);
             const firstDayOfNextWeek = new Date(currentDate);
@@ -89,54 +73,68 @@ var calendar = new Vue({
             
             // Set the first day of the next week (Monday)
             firstDayOfNextWeek.setDate(firstDayOfCurrentWeek.getDate() + 7);
+            
+            let dates = [];
         
             // Generate calendar for the current week and the next 4 weeks
             for (let week = 0; week < 6; week++) {
                 for (let day = 0; day < 7; day++) {
-                    const currentDate = new Date(firstDayOfCurrentWeek);
-                    currentDate.setDate(currentDate.getDate() + (week * 7) + day);
-                    const isToday = currentDate.toDateString() === new Date().toDateString();
-                    const isCurrentMonth = currentDate.getMonth() === firstDayOfCurrentWeek.getMonth();
-                    // Make an API request to get events for the current date using fetch
-                    const events = await this.getEventsForDate(currentDate); // Assuming you have a getEventsForDate function
-                    var title = currentDate.getDate();
-                    var month = '';
-                    //  if month is not current and day is 1 then add month name
-                    if (!isCurrentMonth && title == 1) {
-                        month = currentDate.toLocaleString('default', { month: 'short' });
-                    } else if (isCurrentMonth && week == 0 && day == 0) {
-                        month = currentDate.toLocaleString('default', { month: 'short' });
-                    }
-                    this.days.push({
-                        isToday: isToday,
-                        month: month,
-                        title: title,
-                        events: events // Add events data to the day object
-                    });
-                    if (isToday) {
-                        this.today = this.days[this.days.length - 1];
-                    }
+                    const date = new Date(firstDayOfCurrentWeek);
+                    date.setDate(date.getDate() + (week * 7) + day);
+                    dates.push(date);
                 }
             }
+
+            // Fetch events for all dates in a single request
+            const eventsMap = await this.getEventsForDates(dates);
+            this.days = [];
+            dates.forEach(date => {
+                const isToday = date.toDateString() === new Date().toDateString();
+                const isCurrentMonth = date.getMonth() === firstDayOfCurrentWeek.getMonth();
+                const events = eventsMap[date.toISOString().split('T')[0]] || []; // Get events for the current date
+
+                var title = date.getDate();
+                var month = '';
+                //  if month is not current and day is 1 then add month name
+                if (!isCurrentMonth && title == 1) {
+                    month = date.toLocaleString('default', { month: 'short' });
+                } else if (isCurrentMonth && dates.indexOf(date) == 0) {
+                    month = date.toLocaleString('default', { month: 'short' });
+                }
+                
+                this.days.push({
+                    isToday: isToday,
+                    month: month,
+                    title: title,
+                    events: events // Add events data to the day object
+                });
+
+                if (isToday) {
+                    this.today = this.days[this.days.length - 1];
+                }
+            });
         },
-        
-        async getEventsForDate(date) {
+
+        async getEventsForDates(dates) {
             try {
-                // Make an API request to fetch events for the given date using fetch
-                const response = await fetch(`calanderApiEndpoint.php?date=${date.toISOString()}`); // Adjust the API endpoint and query parameters accordingly
+                // Create a query parameter with all dates
+                const dateStrings = dates.map(date => date.toISOString().split('T')[0]);
+                const response = await fetch(`calanderApiEndpoint.php?dates=${dateStrings.join(',')}`); // Adjust the API endpoint and query parameters accordingly
 
                 if (response.ok) {
                     const data = await response.json();
-                    return data; // Return the events data
+                    return data; // Return the events data mapped by date
                 } else {
                     console.error('Error fetching events:', response.status, response.statusText);
-                    return []; // Return an empty array in case of an error
+                    return {}; // Return an empty object in case of an error
                 }
             } catch (error) {
                 console.error('Error fetching events:', error);
-                return []; // Return an empty array in case of an error
+                return {}; // Return an empty object in case of an error
             }
-        }, getCircleColorClass(colorKey) {
+        },
+
+        getCircleColorClass(colorKey) {
             // Map colorKey to CSS classes representing colors
             const colorClassMap = {
                 red: 'red-circle',
@@ -151,10 +149,9 @@ var calendar = new Vue({
             // Return the CSS class based on the color key
             return colorClassMap[colorKey] || 'default-circle';
         }
-
-
     }
 });
+
 
 
 

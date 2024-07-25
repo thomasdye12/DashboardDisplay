@@ -3,7 +3,10 @@
 
 $CalanderWordblacklist = [
     "Gordon" => [
-        
+        "remove" 
+    ],
+    "Rory" => [
+        "remove" 
     ]
 
     ];
@@ -15,6 +18,9 @@ function FilterCalanderByInfo($event) {
     //  check if the event is in the blacklist, check if the event summary contains any of the words in the blacklist
         foreach ($CalanderWordblacklist as $word => $value) {
             if (strpos($event['summary'], $word) !== false) {
+                if ($value[0] == "remove") {
+                    return "remove";
+                }
                 return "redacted";
             }
         }

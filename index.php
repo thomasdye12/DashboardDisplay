@@ -15,6 +15,7 @@
 
 <body>
     <div class="overlay"></div>
+    <div class="clockWeather">
     <div class=clock id="clock">
         <div class=clock1 id="clock1">
             <p class="time">{{ time }}</p>
@@ -25,16 +26,17 @@
     <div class="weather" id="weather">
         <div v-for="WeatherHour in WeatherData" class="weather-Hour">
             <img class="weather-icon" :src="WeatherHour.weather_icons" />
-            <p class="weather-time">{{ WeatherHour.formattedtime }} - {{ WeatherHour.temperature }}°</p>
+            <p class="weather-time">{{ WeatherHour.formattedtime }} </p>
+            <p class="weather-time">{{ WeatherHour.temperature }}°</p>
 
 
         </div>
     </div>
+    </div>
     <!-- calander info -->
     <div id="calendar-wrapper">
         <!-- todays calander events only -->
-        <div class="calendar-today" id="calander-today">
-            <!-- <p class="title">{{ today.title }}</p> -->
+        <!-- <div class="calendar-today" id="calander-today">
             <ul class="event-list">
                 <li class="event-item" :class="{ 'AllDay-class': event.isAllDay == true }" v-for="(event, index) in today.events" :key="index">
                     <div class="circle" :class="getCircleColorClass(event.calendar.colour)"></div>
@@ -42,7 +44,7 @@
                 </li>
             </ul>
 
-        </div>
+        </div> -->
 
 
 

@@ -32,14 +32,14 @@ html, body {
     padding: 0;
   }
   .clock {
-    width: 100vw;
+    width: 40vw;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: left;
     align-items: center;
     align-content: center;
-    height: 10vh;
+    height: 8vh;
 }
   #clock1 {
     /* padding-left: 50px; */
@@ -60,7 +60,7 @@ html, body {
   }
   #clock1 .date {
     letter-spacing: 0.2em;
-    font-size: 50px;
+    font-size: 30px;
   }
 
 #calendar {
@@ -71,7 +71,7 @@ html, body {
     flex-wrap: wrap;
     gap: 10px; */
     justify-content: flex-start;
-    align-items: flex-start;
+    align-items: stretch;
     color: var(--forground);
     padding-top: 10px;
     /*  set the amount on a single row */
@@ -80,8 +80,9 @@ html, body {
 
 .weekdays {
 
+    position: relative;
     /* justify-content: space-between; */
-
+    font-family: 'Inter', sans-serif;
     /* gap: 10px; */
     text-align: center;
     /* width: calc(13.75% * 7 + 10px * 6); */
@@ -101,10 +102,11 @@ html, body {
     text-align: left;
     display: block;
     position: relative;
-    height: 220px;
+    /* height: 220px; */
     /* rouned corner */
     border-radius: 10px;
     overflow:hidden;
+    padding-bottom: 60px;
 
 }
 .calendar-today {
@@ -114,7 +116,8 @@ html, body {
     text-align: left;
     display: block;
     position: relative;
-    height: 120px;
+    min-height: 20px;
+    padding-bottom: 20px;
     /* rouned corner */
     border-radius: 10px;
 
@@ -182,7 +185,7 @@ html, body {
     position: relative;
     top: 50px;
     left: 5px;
-    width: 98%;
+    width: 96%;
 }
 
 .event-list li {
@@ -198,10 +201,10 @@ html, body {
 }
 
 .circle {
-    width: 10px;
-    height: 10px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
-    margin-right: 10px;
+    margin-right: 7px;
     /* You can set a default color here */
 }
 
@@ -209,7 +212,7 @@ html, body {
 /* Customize the event text styling */
 .event-text {
     font-family: 'Inter', sans-serif;
-    font-size: 14px;
+    font-size: 15px;
     /* color: #333; */
     white-space: inherit; /* Prevent text from wrapping */
     overflow: hidden; /* Hide overflowing text */
@@ -249,14 +252,12 @@ html, body {
     justify-content: space-around;
     align-items: center;
     align-content: center;
-    height: 12vh;
-    width: 100vw;
+    height: 7vh;
+    width: 60vw;
     color: var(--forground);
     /* background-color: #868686; */
     /* background-color: #868686; */
     /* background-color: #868686; */
-
-
 }
 .weather-time {
     font-family: 'Inter', sans-serif;
@@ -267,6 +268,16 @@ html, body {
     /* background-color: #868686; */
 }
 
+/* want to effect the image in the weather-Hour to set its size to be smaller  */
+
+.weather-icon {
+    width: 50px;
+}
+
+.clockWeather  {
+    display: flex;
+    padding-bottom: 30px;
+}
 
 /* Map */
 .mapOverview {

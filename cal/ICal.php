@@ -117,6 +117,10 @@ class ICal
      */
     public $cal = array();
 
+    // events 
+    public $events = array();
+
+
     /**
      * Tracks the VFREEBUSY component
      *
@@ -2261,7 +2265,8 @@ class ICal
     public function eventsFromRange($rangeStart = null, $rangeEnd = null)
     {
         // Sort events before processing range
-        $events = $this->sortEventsWithOrder($this->events());
+        // $events = $this->sortEventsWithOrder($this->events());
+        $events = $this->events();
 
         if ($events === array()) {
             return array();
@@ -2323,6 +2328,67 @@ class ICal
         return $extendedEvents;
     }
 
+    public function eventsFromRangV2($rangeStart = null, $rangeEnd = null)
+    {
+        // Sort events before processing range
+        // $events = $this->sortEventsWithOrder($this->events());
+        $events = $this->events;
+
+        $extendedEvents = array();
+
+        if (!is_null($rangeStart)) {
+            try {
+                $rangeStart = new \DateTime($rangeStart, new \DateTimeZone($this->getDefaultTimeZone()));
+            } catch (\Exception $exception) {
+                error_log("ICal::eventsFromRange: Invalid date passed ({$rangeStart})");
+                $rangeStart = false;
+            }
+        } else {
+            $rangeStart = new \DateTime('now', new \DateTimeZone($this->getDefaultTimeZone()));
+        }
+
+        if (!is_null($rangeEnd)) {
+            try {
+                $rangeEnd = new \DateTime($rangeEnd, new \DateTimeZone($this->getDefaultTimeZone()));
+            } catch (\Exception $exception) {
+                error_log("ICal::eventsFromRange: Invalid date passed ({$rangeEnd})");
+                $rangeEnd = false;
+            }
+        } else {
+            $rangeEnd = new \DateTime('now', new \DateTimeZone($this->getDefaultTimeZone()));
+            $rangeEnd->modify('+20 years');
+        }
+
+        if ($rangeEnd !== false && $rangeStart !== false) {
+            // If start and end are identical and are dates with no times...
+            if ($rangeEnd->format('His') == 0 && $rangeStart->getTimestamp() === $rangeEnd->getTimestamp()) {
+                $rangeEnd->modify('+1 day');
+            }
+
+            $rangeStart = $rangeStart->getTimestamp();
+            $rangeEnd   = $rangeEnd->getTimestamp();
+        }
+
+        foreach ($events as $anEvent) {
+            $eventStart = $anEvent->dtstart_array[2];
+            $eventEnd   = (isset($anEvent->dtend_array[2])) ? $anEvent->dtend_array[2] : null;
+
+            if (
+                ($eventStart >= $rangeStart && $eventStart < $rangeEnd)         // Event start date contained in the range
+                || (
+                    $eventEnd !== null
+                    && (
+                        ($eventEnd > $rangeStart && $eventEnd <= $rangeEnd)     // Event end date contained in the range
+                        || ($eventStart < $rangeStart && $eventEnd > $rangeEnd) // Event starts before and finishes after range
+                    )
+                )
+            ) {
+                $extendedEvents[] = $anEvent;
+            }
+        }
+
+        return $extendedEvents;
+    }
     /**
      * Returns a sorted array of the events following a given string
      *
@@ -2364,6 +2430,13 @@ class ICal
         array_multisort($timestamp, $sortOrder, $extendedEvents);
 
         return $extendedEvents;
+    }
+
+    // public function to sort the events with order 
+
+    public function sortEventsFirst()
+    {
+        $this->events = $this->sortEventsWithOrder($this->events(), SORT_ASC);
     }
 
     /**
