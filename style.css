@@ -281,6 +281,7 @@ html, body {
 
 /* Map */
 .mapOverview {
+    padding-top: 10px;
     position: relative;
     z-index: 1;
     display: flex;
@@ -289,8 +290,8 @@ html, body {
     justify-content: space-around;
     align-items: center;
     align-content: center;
-    height: 15vh;
-    width: 99vw;
+    height: 30vh;
+    width: 98vw;
     color: var(--forground);
     /* background-color: #868686; */
     /* background-color: #868686; */
