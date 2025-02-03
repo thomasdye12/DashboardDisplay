@@ -341,3 +341,43 @@ html, body {
         opacity: 1;
     }
 }
+.calendar-key {
+    z-index: 1;
+    text-align: left;
+    /* width: fit-content; */
+    color: white;
+    position: relative;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.calendar-key h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.calendar-key ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.calendar-key li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    margin-right: 5px;
+}
+
+.key-circle {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 10px;
+}

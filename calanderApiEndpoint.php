@@ -127,7 +127,7 @@ function processEvents($events, $calendarName) {
             $url = TDSDocsURL($event['isDocs']["url"]);
             $event['isDocs']["ID"] = $url;
             $event['isDocs']["Doc"] = TDSDocsLookUp($url);
-            if ($event['isDocs']["Doc"]["description"] !== null) {
+            if (isset($event['isDocs']["Doc"]["description"])) {
                 $event['summary1'] = $event["summary1"] . " - Docs:" . $event['isDocs']["Doc"]["description"];
             }
         }

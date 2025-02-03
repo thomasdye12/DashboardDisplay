@@ -46,7 +46,7 @@ var calendar = new Vue({
     el: '#calendar-wrapper',
     data: {
         days: [],
-        today: []
+        today: [],
     },
     mounted() {
         this.generateCalendar();
@@ -216,7 +216,7 @@ var PersonMaps = new Vue({
         this.getPersonMaps();
         this.intervalId = setInterval(() => {
             this.UpdateView();
-        }, 15 * 60 * 1000);
+        }, 25 * 60 * 1000);
     },
     beforeDestroy() {
         clearInterval(this.intervalId);
@@ -390,3 +390,19 @@ function LocaliseNames(name, localisedNames) {
     var localisedName = localisedNames.find(x => x.name == name);
     return localisedName ? localisedName.localisedName : name;
 }
+
+
+var calendarKey = new Vue({
+    el: '#calendarKey',
+    data: {
+        keyData: {
+            red: "Urgent Events",
+            blue: "Meetings",
+            green: "Personal",
+            yellow: "Reminders",
+            purple: "Birthdays",
+            orange: "Travel",
+            grey: "Other"
+        }
+    }
+});

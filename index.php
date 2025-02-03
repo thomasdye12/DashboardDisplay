@@ -16,22 +16,30 @@
 <body>
     <div class="overlay"></div>
     <div class="clockWeather">
-    <div class=clock id="clock">
-        <div class=clock1 id="clock1">
-            <p class="time">{{ time }}</p>
-            <p class="date">{{ date }}</p>
+        <div class=clock id="clock">
+            <div class=clock1 id="clock1">
+                <p class="time">{{ time }}</p>
+                <p class="date">{{ date }}</p>
+            </div>
         </div>
-    </div>
-    <!-- weather info -->
-    <div class="weather" id="weather">
-        <div v-for="WeatherHour in WeatherData" class="weather-Hour">
-            <img class="weather-icon" :src="WeatherHour.weather_icons" />
-            <p class="weather-time">{{ WeatherHour.formattedtime }} </p>
-            <p class="weather-time">{{ WeatherHour.temperature }}°</p>
+        <div class="WeatherCalander" id="WeatherCalander">
+            <!-- weather info -->
+            <div class="weather" id="weather">
+                <div v-for="WeatherHour in WeatherData" class="weather-Hour">
+                    <img class="weather-icon" :src="WeatherHour.weather_icons" />
+                    <p class="weather-time">{{ WeatherHour.formattedtime }} </p>
+                    <p class="weather-time">{{ WeatherHour.temperature }}°</p>
 
 
+                </div>
+            </div>
+            <!-- Calendar Key -->
+            <div class="calendar-key" id="calendarKey">
+                    <li v-for="(person, color) in keyData" :key="color">
+                        <span class="key-circle" :style="{ backgroundColor: color }"></span> {{ person }}
+                    </li>
+            </div>
         </div>
-    </div>
     </div>
     <!-- calander info -->
     <div id="calendar-wrapper">
@@ -80,11 +88,11 @@
         </div>
     </div>
     <!-- locaton map of users -->
-     <div class="mapOverview" id="map">
+    <div class="mapOverview" id="map">
     </div>
 
 
-   
+
 </body>
 
 
