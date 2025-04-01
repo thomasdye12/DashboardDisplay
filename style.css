@@ -239,9 +239,26 @@ html, body {
 .red-circle {
     background-color: red;
 }
-.AllDay-class {
-    background-color: #868686;
+.event-item-ALLDAY {
+    display: inline-block;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
 }
+.AllDay-class {
+    /* background-color: #868686; */
+    color: white;
+    padding: 6px 10px;
+    border-radius: 10px;
+    margin: 4px 0 4px 24px; /* leave room for the circle */
+    font-weight: 500;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    transition: background-color 0.3s ease;
+    width: fit-content;
+    display: inline-block;
+}
+
 
 .weather {
     position: relative;

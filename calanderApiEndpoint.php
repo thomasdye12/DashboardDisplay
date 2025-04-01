@@ -131,6 +131,10 @@ function processEvents($events, $calendarName) {
                 $event['summary1'] = $event["summary1"] . " - Docs:" . $event['isDocs']["Doc"]["description"];
             }
         }
+        //  if the lenght of the summery is grather then 10 char then add a ... to the end
+        if (strlen($event['summary']) > 10) {
+            $event['summary'] = substr($event['summary'], 0, 30) . "...";
+        }
 
         if ($filtertype != "false") {
             $eventsOnDate[] = $event;

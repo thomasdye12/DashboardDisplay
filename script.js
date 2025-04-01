@@ -46,7 +46,18 @@ var calendar = new Vue({
     el: '#calendar-wrapper',
     data: {
         days: [],
-        today: [],
+        today: {
+            events: []
+        },
+
+    },
+    computed: {
+        allDayEvents() {
+            return this.today.events.filter(event => event.isAllDay);
+        },
+        timedEvents() {
+            return this.today.events.filter(event => !event.isAllDay);
+        }
     },
     mounted() {
         this.generateCalendar();
@@ -77,7 +88,7 @@ var calendar = new Vue({
             let dates = [];
         
             // Generate calendar for the current week and the next 4 weeks
-            for (let week = 0; week < 6; week++) {
+            for (let week = 0; week < 5; week++) {
                 for (let day = 0; day < 7; day++) {
                     const date = new Date(firstDayOfCurrentWeek);
                     date.setDate(date.getDate() + (week * 7) + day);
@@ -110,7 +121,7 @@ var calendar = new Vue({
                 });
 
                 if (isToday) {
-                    this.today = this.days[this.days.length - 1];
+                    this.today = this.days[this.days.length - 2];
                 }
             });
         },
@@ -210,23 +221,31 @@ var PersonMaps = new Vue({
     el: '#map',
     data: {
         Users: [],
-        map: null, // Add a map object to the data
+        map: null, // Map object
+        currentUserIndex: 0, // Index to track the highlighted user
+        highlightInterval: null, // Interval ID for user rotation
     },
     mounted() {
         this.getPersonMaps();
+        
+        // Refresh map data every 25 minutes
         this.intervalId = setInterval(() => {
-            this.UpdateView();
+            this.getPersonMaps();
         }, 25 * 60 * 1000);
+
+        // Start cycling through users every 20 seconds
+        this.highlightInterval = setInterval(() => {
+            this.highlightNextUser();
+        }, 20 * 1000);
     },
     beforeDestroy() {
         clearInterval(this.intervalId);
+        clearInterval(this.highlightInterval);
     },
     methods: {
         async getPersonMaps() {
             try {
-                this.Users = [];
                 const response = await fetch(`LocationTrackingapi.php`);
-
                 if (response.ok) {
                     const data = await response.json();
                     this.Users = data.location;
@@ -237,18 +256,26 @@ var PersonMaps = new Vue({
                         }
                     });
 
-                    // Initialize the map once
-                    this.map = new mapkit.Map("map");
-                    this.map.colorScheme = mapkit.Map.ColorSchemes.Dark;
-                    this.map.showsMapTypeControl = false;
-                    this.map.showsZoomControl = false;
+                    // Initialize map if not already created
+                    if (!this.map) {
+                        this.map = new mapkit.Map("map");
+                        this.map.colorScheme = mapkit.Map.ColorSchemes.Dark;
+                        this.map.showsMapTypeControl = false;
+                        this.map.showsZoomControl = false;
+                        this.map.mapType = mapkit.Map.MapTypes.Hybrid;
+                    }
+
+                    // Clear existing annotations before adding new ones
+                    this.map.removeAnnotations(this.map.annotations);
+
                     // Add all users to the map
                     this.Users.forEach(element => {
                         this.addAnnotationToMap(element, data.localisedAddress);
                     });
 
-                    // Adjust the map to show all annotations
-                    this.adjustMapRegion();
+                    // Adjust the map region
+                    // this.adjustMapRegion();
+                    this.highlightNextUser();
 
                 } else {
                     console.error('Error fetching personMaps:', response.status, response.statusText);
@@ -257,41 +284,27 @@ var PersonMaps = new Vue({
                 console.error('Error fetching personMaps:', error);
             }
         },
-        async UpdateView() {
-            try {
-                const response = await fetch(`LocationTrackingapi.php`);
+        highlightNextUser() {
+            if (this.Users.length === 0) return;
 
-                if (response.ok) {
-                    const data = await response.json();
+            // Increment index, loop back if at the end
+            this.currentUserIndex = (this.currentUserIndex + 1) % this.Users.length;
 
-                    // Loop over the new data and update the map
-                    data.location.forEach(element => {
-                        var oldData = this.Users.find(x => x.Device == element.Device);
-                        if (oldData == null) {
-                            return;
-                        }
+            // Highlight the user by zooming in on their location
+            const user = this.Users[this.currentUserIndex];
+            if (user && user.Location && user.Location.Location) {
+                const coordinate = new mapkit.Coordinate(
+                    user.Location.Location.latitude,
+                    user.Location.Location.longitude
+                );
 
-                        if (oldData.Location.Location.latitude == element.Location.Location.latitude &&
-                            oldData.Location.Location.longitude == element.Location.Location.longitude) {
-                            return;
-                        }
+                // Set region to focus on the highlighted user
+                const region = new mapkit.CoordinateRegion(
+                    coordinate,
+                    new mapkit.CoordinateSpan(0.0009, 0.0009) // Zoom in closer
+                );
 
-                        // Update the existing annotation with the new data
-                        this.updateAnnotationOnMap(oldData, element, data.localisedAddress);
-
-                        // Update the data in the Users array
-                        oldData.Location.Location.latitude = element.Location.Location.latitude;
-                        oldData.Location.Location.longitude = element.Location.Location.longitude;
-                    });
-
-                    // Adjust the map to show all annotations
-                    this.adjustMapRegion();
-
-                } else {
-                    console.error('Error fetching personMaps:', response.status, response.statusText);
-                }
-            } catch (error) {
-                console.error('Error fetching personMaps:', error);
+                this.map.setRegionAnimated(region);
             }
         },
         addAnnotationToMap(element, localisedNames) {
@@ -300,10 +313,7 @@ var PersonMaps = new Vue({
             );
             annotation.color = element.color;
             annotation.title = element.name;
-           
             annotation.subtitle = "person";
-            // annotation.displayPriority = mapkit.AnnotationDisplayPriority.High;
-            // annotation.selected = true;
 
             var geocoder = new mapkit.Geocoder({
                 language: "en-GB"
@@ -322,39 +332,12 @@ var PersonMaps = new Vue({
 
             annotation.titleVisibility = mapkit.FeatureVisibility.Visible;
             annotation.subtitleVisibility = mapkit.FeatureVisibility.Visible;
-            // Add the annotation to the map
+
+            // Add annotation to map
             this.map.addAnnotation(annotation);
-            
 
-            // Store the annotation in the user's data for future updates
+            // Store annotation reference
             element.annotation = annotation;
-        },
-        updateAnnotationOnMap(oldData, newData, localisedNames) {
-            var annotation = oldData.annotation;
-
-            // Update the annotation's coordinate
-            annotation.coordinate = new mapkit.Coordinate(newData.Location.Location.latitude, newData.Location.Location.longitude);
-            annotation.color = newData.color;
-            annotation.title = newData.name;
-
-            var geocoder = new mapkit.Geocoder({
-                language: "en-GB"
-            }).reverseLookup(annotation.coordinate, (err, data) => {
-                annotation.subtitle = LocaliseNames(data.results[0].name, localisedNames);
-            });
-
-            if (newData.imageurl) {
-                const imageDelegate = {
-                    getImageUrl(scale, callback) {
-                        callback(newData.imageurl);
-                    }
-                };
-                annotation.glyphImage = imageDelegate;
-            }
-
-            annotation.titleVisibility = mapkit.FeatureVisibility.Visible;
-            annotation.subtitleVisibility = mapkit.FeatureVisibility.Visible;
-            // Update the map region to center around the new location
         },
         adjustMapRegion() {
             if (this.Users.length === 0) return;
@@ -378,13 +361,14 @@ var PersonMaps = new Vue({
 
             const region = new mapkit.CoordinateRegion(
                 new mapkit.Coordinate(centerLat, centerLon),
-                new mapkit.CoordinateSpan(spanLat * 1.1, spanLon * 1.1) // Adding some padding
+                new mapkit.CoordinateSpan(spanLat * 1.09, spanLon * 1.09) // Adding some padding
             );
 
             this.map.setRegionAnimated(region);
         }
     }
 });
+
 
 function LocaliseNames(name, localisedNames) {
     var localisedName = localisedNames.find(x => x.name == name);
@@ -395,14 +379,31 @@ function LocaliseNames(name, localisedNames) {
 var calendarKey = new Vue({
     el: '#calendarKey',
     data: {
-        keyData: {
-            red: "Urgent Events",
-            blue: "Meetings",
-            green: "Personal",
-            yellow: "Reminders",
-            purple: "Birthdays",
-            orange: "Travel",
-            grey: "Other"
+        keyData: {} // Initially empty, will be filled with API data
+    },
+    mounted() {
+        this.fetchCalendarKey();
+    },
+    methods: {
+        async fetchCalendarKey() {
+            try {
+                const response = await fetch('CalanderKey.php');
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Convert the response into the expected keyData format
+                    let formattedKeyData = {};
+                    data.forEach(item => {
+                        formattedKeyData[item.colour] = item.name;
+                    });
+
+                    this.keyData = formattedKeyData;
+                } else {
+                    console.error('Error fetching calendar key:', response.status, response.statusText);
+                }
+            } catch (error) {
+                console.error('Error fetching calendar key:', error);
+            }
         }
     }
 });

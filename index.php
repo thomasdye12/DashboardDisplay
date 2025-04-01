@@ -35,24 +35,31 @@
             </div>
             <!-- Calendar Key -->
             <div class="calendar-key" id="calendarKey">
-                    <li v-for="(person, color) in keyData" :key="color">
-                        <span class="key-circle" :style="{ backgroundColor: color }"></span> {{ person }}
-                    </li>
+                <li v-for="(person, color) in keyData" :key="color">
+                    <span class="key-circle" :style="{ backgroundColor: color }"></span> {{ person }}
+                </li>
             </div>
         </div>
     </div>
     <!-- calander info -->
     <div id="calendar-wrapper">
         <!-- todays calander events only -->
-        <!-- <div class="calendar-today" id="calander-today">
+        <div class="calendar-today" id="calander-today">
             <ul class="event-list">
-                <li class="event-item" :class="{ 'AllDay-class': event.isAllDay == true }" v-for="(event, index) in today.events" :key="index">
+                <!-- All-day events -->
+                <li class="event-item-ALLDAY AllDay-class" v-for="(event, index) in allDayEvents" :key="'allDay-' + index">
+                    <div class="circle" :class="getCircleColorClass(event.calendar.colour)"></div>
+                    <p class="event-text">{{ event.summary1 }}</p>
+                </li>
+
+                <!-- Timed events -->
+                <li class="event-item" v-for="(event, index) in timedEvents" :key="'timed-' + index">
                     <div class="circle" :class="getCircleColorClass(event.calendar.colour)"></div>
                     <p class="event-text">{{ event.summary1 }}</p>
                 </li>
             </ul>
+        </div>
 
-        </div> -->
 
 
 
@@ -97,7 +104,7 @@
 
 
 <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.4/vue.min.js'></script>
-<script src="https://cdn.apple-mapkit.com/mk/5.x.x/mapkit.js"></script>
+<script src="https://cdn.apple-mapkit.com/mk/5.40.x/mapkit.js"></script>
 <script type="text/javascript" src="script.js"></script>
 
 </html>
