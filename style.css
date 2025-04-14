@@ -58,6 +58,12 @@ html, body {
     font-size: 80px;
     padding: 5px 0;
   }
+  #clock1 .time2 {
+    letter-spacing: 0.05em;
+    font-size: 20px;
+    padding: 5px 0;
+    color: gray;
+  }
   #clock1 .date {
     letter-spacing: 0.2em;
     font-size: 30px;

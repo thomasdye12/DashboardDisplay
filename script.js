@@ -5,7 +5,9 @@ var clock = new Vue({
     data: {
         time: '',
         date: '',
-        quote: 'Loading Down'
+        time2: '',
+        quote: 'Loading Down',
+        utcTimezoneOffset: -4.0 // for time
     }
 });
 
@@ -27,6 +29,14 @@ function updateTime() {
 
     clock.time = zeroPadding(cd.getHours(), 2) + ':' + zeroPadding(cd.getMinutes(), 2) + ':' + zeroPadding(cd.getSeconds(), 2);
     clock.date = dayName + ',' + monthName + ' ' + zeroPadding(cd.getDate(), 2);
+  // UTC time
+  var utc = cd.getTime() + (cd.getTimezoneOffset() * 60000);
+
+  // Offset time (e.g., UTC-4)
+  var offsetTime2 = new Date(utc + (clock.utcTimezoneOffset * 3600000));
+  clock.time2 = zeroPadding(offsetTime2.getHours(), 2) + ':' +
+      zeroPadding(offsetTime2.getMinutes(), 2) + ':' +
+      zeroPadding(offsetTime2.getSeconds(), 2);
 }
 
 function zeroPadding(num, digit) {
@@ -121,7 +131,8 @@ var calendar = new Vue({
                 });
 
                 if (isToday) {
-                    this.today = this.days[this.days.length - 2];
+                    this.today = this.days[this.days.length - 1
+                    ];
                 }
             });
         },
