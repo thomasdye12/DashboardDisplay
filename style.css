@@ -1,171 +1,150 @@
 html, body {
     height: 100%;
-    /*  virable for forgound colour */
     --forground: #ffffff;
+    font-family: 'Inter', sans-serif;
+    color: var(--forground);
+    position: relative;
+}
 
-    
-    
-  }
-  
-  body {
-    /*  set background image url */
+body {
     background-image: url("images/london2.jpeg");
-    /* add tint */
-    /* background: #313958; */
-    /* background: radial-gradient(ellipse at center, #00c8ff 0%, #f10606 70%); */
-    background-size: 100%;
     background-size: cover;
     background-position: center;
-  }
-  .overlay {
+    background-attachment: fixed;
+}
+
+.overlay {
     z-index: 0;
-    background-color: rgba(0, 0, 0, 0.8); /* Adjust the opacity (last value) as needed */
+    background-color: rgba(0, 0, 0, 0.6);
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
 }
-  
-  p {
+
+p {
     margin: 0;
     padding: 0;
-  }
-  .clock {
+}
+
+/* === GLASSMORPHIC PANEL BASE === */
+.glass-card,
+.calendar-day,
+.calendar-today,
+.weekdays-text,
+.weather,
+.mapOverview,
+.reporting-wrapper {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    padding: 15px;
+}
+
+/* === CLOCK === */
+.clock {
     width: 40vw;
     display: flex;
     flex-direction: row;
-    flex-wrap: nowrap;
     justify-content: left;
     align-items: center;
-    align-content: center;
     height: 8vh;
 }
-  #clock1 {
-    /* padding-left: 50px; */
+
+#clock1 {
     font-family: 'Inter', sans-serif;
     color: var(--forground);
     text-align: left;
     position: absolute;
-    /* left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%); */
-    /* color: #daf6ff; */
-    /* text-shadow: 0 0 20px #0aafe6, 0 0 20px rgba(10, 175, 230, 0); */
-  }
-  #clock1 .time {
+}
+
+#clock1 .time {
     letter-spacing: 0.05em;
     font-size: 80px;
     padding: 5px 0;
-  }
-  #clock1 .time2 {
+}
+
+#clock1 .time2 {
     letter-spacing: 0.05em;
     font-size: 20px;
     padding: 5px 0;
     color: gray;
-  }
-  #clock1 .date {
+}
+
+#clock1 .date {
     letter-spacing: 0.2em;
     font-size: 30px;
-  }
+}
 
+/* === CALENDAR GRID === */
 #calendar {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(126px, 2fr)); /* Adjust column width as needed */
-    grid-gap: 10px; /* Adjust as needed for spacing between cells */
-    /* display: flex;
-    flex-wrap: wrap;
-    gap: 10px; */
+    grid-template-columns: repeat(auto-fill, minmax(126px, 2fr));
+    grid-gap: 10px;
     justify-content: flex-start;
     align-items: stretch;
     color: var(--forground);
     padding-top: 10px;
-    /*  set the amount on a single row */
-    /* width: calc(13.75% * 7 + 10px * 6); */
 }
 
 .weekdays {
-
     position: relative;
-    /* justify-content: space-between; */
     font-family: 'Inter', sans-serif;
-    /* gap: 10px; */
     text-align: center;
-    /* width: calc(13.75% * 7 + 10px * 6); */
-    /* padding: 10px; */
-    /* background-color: #eee; */
     color: var(--forground);
 }
+
 .weekdays-text {
-    /* width: calc(13.75% - 10px); */
     border: 1px solid var(--forground);
 }
 
-.calendar-day {
-  
-    /* width: calc(13.75% - 10px); */
-    border: 1px solid var(--forground);
-    text-align: left;
-    display: block;
-    position: relative;
-    /* height: 220px; */
-    /* rouned corner */
-    border-radius: 10px;
-    overflow:hidden;
-    padding-bottom: 60px;
-
-}
+/* === CALENDAR CELLS === */
+.calendar-day,
 .calendar-today {
-  
-    /* width: calc(13.75% - 10px); */
-    border: 1px solid var(--forground);
     text-align: left;
     display: block;
     position: relative;
-    min-height: 20px;
-    padding-bottom: 20px;
-    /* rouned corner */
     border-radius: 10px;
+    overflow: hidden;
+}
 
-}
-.calendar-day.today .date {
-    color: red;
-}
-.calendar-day .title {
-    z-index: 1;
-    /* top: 5px;
-    left: 5px; */
-    position: absolute;
-}
+.calendar-day .title,
 .calendar-today .title {
     z-index: 1;
-    /* top: 5px;
-    left: 5px; */
-    color: var(--forground);
     position: absolute;
     font-size: 28px;
     font-family: 'Inter', sans-serif;
 }
+
 .calendar-today .event-list {
     top: 0px;
     left: 5px;
 }
+
+.calendar-day.today .date {
+    color: red;
+}
+
 .red-circleAlways {
-    z-index: 0; 
+    z-index: 0;
     display: flex;
     width: 40px;
     height: 40px;
-
     border-radius: 50%;
     position: absolute;
     top: 5px;
     right: 5px;
-    justify-content: center; /* Horizontally center the item */
-    align-items: center; /* Vertically center the item */
+    justify-content: center;
+    align-items: center;
     font-size: 28px;
     font-family: 'Inter', sans-serif;
     margin: 0;
 }
+
 .title-month {
     position: absolute;
     width: 40px;
@@ -175,19 +154,13 @@ html, body {
     top: 5px;
     left: 5px;
 }
-.red-circle {
-    background-color: red;
-}
 
-
-
-
-
+/* === EVENTS === */
 .event-list {
-    list-style: none; /* Remove default list bullet points */
+    list-style: none;
     margin: 0;
     padding: 0;
-    text-align: left; /* Adjust alignment as needed */
+    text-align: left;
     position: relative;
     top: 50px;
     left: 5px;
@@ -195,9 +168,9 @@ html, body {
 }
 
 .event-list li {
-    margin: 5px 0; /* Add spacing between list items */
-    font-size: 10px; /* Adjust font size as needed */
-    color: var(--forground); /* Adjust text color as needed */
+    margin: 5px 0;
+    font-size: 10px;
+    color: var(--forground);
 }
 
 .event-item {
@@ -211,181 +184,102 @@ html, body {
     height: 7px;
     border-radius: 50%;
     margin-right: 7px;
-    /* You can set a default color here */
 }
 
-
-/* Customize the event text styling */
 .event-text {
     font-family: 'Inter', sans-serif;
     font-size: 15px;
-    /* color: #333; */
-    white-space: inherit; /* Prevent text from wrapping */
-    overflow: hidden; /* Hide overflowing text */
-    text-overflow: ellipsis; /* Display an ellipsis (...) for overflowing text */
+    white-space: inherit;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* custom colours for calander */
-
-.orange-circle {
-    background-color: orange;
-}
-.green-circle {
-    background-color: green;
-}
-.blue-circle {
-    background-color: blue;
-}
-.yellow-circle {
-    background-color: yellow;
-}
-.purple-circle {
-    background-color: purple;
-}
-.red-circle {
-    background-color: red;
-}
 .event-item-ALLDAY {
     display: inline-block;
-    align-items: center;
     gap: 8px;
     margin-bottom: 6px;
 }
+
 .AllDay-class {
-    /* background-color: #868686; */
     color: white;
     padding: 6px 10px;
     border-radius: 10px;
-    margin: 4px 0 4px 24px; /* leave room for the circle */
+    margin: 4px 0 4px 24px;
     font-weight: 500;
     font-size: 14px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-    transition: background-color 0.3s ease;
     width: fit-content;
     display: inline-block;
 }
 
+/* === COLORS === */
+.orange-circle { background-color: orange; }
+.green-circle { background-color: green; }
+.blue-circle { background-color: blue; }
+.yellow-circle { background-color: yellow; }
+.purple-circle { background-color: purple; }
+.red-circle { background-color: red; }
 
+/* === WEATHER === */
 .weather {
     position: relative;
     z-index: 1;
     display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
     justify-content: space-around;
     align-items: center;
-    align-content: center;
     height: 7vh;
     width: 60vw;
     color: var(--forground);
-    /* background-color: #868686; */
-    /* background-color: #868686; */
-    /* background-color: #868686; */
 }
+
 .weather-time {
     font-family: 'Inter', sans-serif;
     font-size: 15px;
-    /* padding: 5px 0; */
-    /* background-color: #868686; */
-    /* background-color: #868686; */
-    /* background-color: #868686; */
 }
-
-/* want to effect the image in the weather-Hour to set its size to be smaller  */
 
 .weather-icon {
     width: 50px;
 }
 
-.clockWeather  {
+/* === CLOCK & WEATHER WRAPPER === */
+.clockWeather {
     display: flex;
     padding-bottom: 30px;
 }
 
-/* Map */
+/* === MAP === */
 .mapOverview {
     padding-top: 10px;
     position: relative;
     z-index: 1;
     display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
     justify-content: space-around;
     align-items: center;
-    align-content: center;
     height: 30vh;
     width: 98vw;
     color: var(--forground);
-    /* background-color: #868686; */
-    /* background-color: #868686; */
-    /* background-color: #868686; */
 }
+
 .map-PersonsMap {
     height: 240px;
     width: 200px;
-    /* corner radioue */
     border-radius: 10px;
-    /* hide everythign behind the corners */
     overflow: hidden;
+}
 
-}
-.mk-logo-control {
-    display: none;
-}
-.mk-legal-controls {
+.mk-logo-control, .mk-legal-controls {
     display: none;
 }
 
-
-
-
-
-
-@-webkit-keyframes scale-and-fadein {
-    0% {
-        -webkit-transform: scale(0.2);
-        opacity: 0;
-    }
-
-    100% {
-        -webkit-transform: scale(1);
-        opacity: 1;
-    }
-}
-
-@keyframes scale-and-fadein {
-    0% {
-        transform: scale(0.2);
-        opacity: 0;
-    }
-
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
+/* === CALENDAR KEY === */
 .calendar-key {
     z-index: 1;
     text-align: left;
-    /* width: fit-content; */
     color: white;
     position: relative;
     font-family: 'Inter', sans-serif;
     font-size: 15px;
     display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-}
-
-.calendar-key h3 {
-    font-size: 16px;
-    margin-bottom: 10px;
-}
-
-.calendar-key ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
     flex-direction: row;
     flex-wrap: nowrap;
 }
@@ -405,16 +299,10 @@ html, body {
     margin-right: 10px;
 }
 
+/* === REPORTS / TASKS SECTION === */
 .reporting-wrapper {
     margin-top: 20px;
-    padding: 20px;
-    background-color: rgba(0, 0, 0, 0.4); /* more visible background */
-    border: 1px solid var(--forground);
-    border-radius: 12px;
-    color: var(--forground);
-    font-family: 'Inter', sans-serif;
-    z-index: 1; /* make sure it's above overlay */
-    position: relative;
+    z-index: 1;
 }
 
 .reporting-title {
@@ -443,6 +331,7 @@ html, body {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
     transition: transform 0.2s ease;
     font-size: 16px;
+    color: var(--forground);
 }
 
 .report-item:hover {
@@ -461,4 +350,30 @@ html, body {
     font-style: normal;
     font-size: 14px;
     color: gray;
+}
+
+/* === OPTIONAL BADGES FOR SEVERITY === */
+.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-top: 5px;
+}
+
+.low {
+    background-color: green;
+    color: white;
+}
+
+.medium {
+    background-color: orange;
+    color: white;
+}
+
+.high {
+    background-color: red;
+    color: white;
 }
