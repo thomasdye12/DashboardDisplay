@@ -5,7 +5,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 header('Content-Type: application/json');
-
+header('TDS-Cache: 0');
 // Get the dates from the query parameter
 $dates = explode(',', $_GET['dates']);
 $eventsByDate = [];
@@ -49,12 +49,25 @@ function getEventsForDate($date, $calendarData) {
         $events = $ical["ICal"]->eventsFromRangV2($formattedDate, $formattedDate);
         $eventsOnDate = array_merge($eventsOnDate, processEvents($events, $ical["calander"]));
     }
-
-    usort($eventsOnDate, function ($a, $b) {
+    $uniqueEvents = [];
+    foreach ($eventsOnDate as $event) {
+        $isDuplicate = false;
+        foreach ($uniqueEvents as $addedEvent) {
+            if (areSummariesSimilar($event['summary1'], $addedEvent['summary1'])) {
+                $isDuplicate = true;
+                break;
+            }
+        }
+        if (!$isDuplicate) {
+            $uniqueEvents[] = $event;
+        }
+    }
+  
+    usort( $uniqueEvents, function ($a, $b) {
         return $a['dtstart'] <=> $b['dtstart'];
     });
 
-    return $eventsOnDate;
+    return  $uniqueEvents;
 }
 
 /**
@@ -142,10 +155,22 @@ function processEvents($events, $calendarName) {
     }
     // filter out events with the same summery on the same day
 
+  return $eventsOnDate;
 
-    return $eventsOnDate;
 }
 
+function normalizeSummary($summary) {
+    return strtolower(trim(preg_replace('/[^a-zA-Z0-9 ]/', '', $summary)));
+}
+
+function areSummariesSimilar($summary1, $summary2, $threshold = 50) {
+    $summary1 = normalizeSummary($summary1);
+    $summary2 = normalizeSummary($summary2);
+    // echo "Summary1: " . $summary1 . "\n";
+    // echo "Summary2: " . $summary2 . "\n";
+    similar_text($summary1, $summary2, $percent);
+    return $percent >= $threshold;
+}
 /**
  * Check if the event contains a TDS docs URL
  *
