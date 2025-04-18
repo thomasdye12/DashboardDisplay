@@ -93,9 +93,26 @@
             </div>
 
         </div>
+
     </div>
+
+
+        <!-- Tasks To Do List -->
+        <div id="reporting-wrapper" class="reporting-wrapper">
+    <div v-if="ready">
+        <h2 class="reporting-title">House Tasks</h2>
+        <ul class="report-list">
+            <li class="report-item" v-for="report in filteredReports" :key="report.id">
+                <strong>{{ report.title }}</strong> - <em>{{ report.severity }}</em>
+            </li>
+        </ul>
+        <p v-if="filteredReports.length === 0">No tasks at the moment 🎉</p>
+    </div>
+</div>
+
+
     <!-- locaton map of users -->
-    <div class="mapOverview" id="map">
+    <!-- <div class="mapOverview" id="map"> -->
     </div>
 
 
@@ -104,7 +121,7 @@
 
 
 <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.4/vue.min.js'></script>
-<script src="https://cdn.apple-mapkit.com/mk/5.40.x/mapkit.js"></script>
+<!-- <script src="https://cdn.apple-mapkit.com/mk/5.40.x/mapkit.js"></script> -->
 <script type="text/javascript" src="script.js"></script>
 
 </html>

@@ -224,161 +224,203 @@ var weather = new Vue({
     }
 });
 
+var reports = new Vue({
+    el: '#reporting-wrapper',
+    data: {
+        allReports: [],
+        ready: false
+    },
+    computed: {
+        filteredReports() {
+            return this.allReports.filter(report => report.status !== 'Completed');
+        }
+    },
+    mounted() {
+        this.getReports();
+        this.ready = true;
+        this.intervalId = setInterval(() => {
+            this.getReports();
+        }, 60 * 60 * 1000);
+    },
+    beforeDestroy() {
+        clearInterval(this.intervalId);
+    },
+    methods: {
+        async getReports() {
+            try {
+                const response = await fetch('TDSReporting.php');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.status === 'success') {
+                        this.allReports = data.reports;
+                    } else {
+                        console.error('Invalid response format from TDSReporting.php');
+                    }
+                } else {
+                    console.error('Fetch error:', response.status, response.statusText);
+                }
+            } catch (error) {
+                console.error('Error fetching reports:', error);
+            }
+        }
+    }
+});
+
 
 // define mapkit
 
 
-var PersonMaps = new Vue({
-    el: '#map',
-    data: {
-        Users: [],
-        map: null, // Map object
-        currentUserIndex: 0, // Index to track the highlighted user
-        highlightInterval: null, // Interval ID for user rotation
-    },
-    mounted() {
-        this.getPersonMaps();
+// var PersonMaps = new Vue({
+//     el: '#map',
+//     data: {
+//         Users: [],
+//         map: null, // Map object
+//         currentUserIndex: 0, // Index to track the highlighted user
+//         highlightInterval: null, // Interval ID for user rotation
+//     },
+//     mounted() {
+//         this.getPersonMaps();
         
-        // Refresh map data every 25 minutes
-        this.intervalId = setInterval(() => {
-            this.getPersonMaps();
-        }, 25 * 60 * 1000);
+//         // Refresh map data every 25 minutes
+//         this.intervalId = setInterval(() => {
+//             this.getPersonMaps();
+//         }, 25 * 60 * 1000);
 
-        // Start cycling through users every 20 seconds
-        this.highlightInterval = setInterval(() => {
-            this.highlightNextUser();
-        }, 20 * 1000);
-    },
-    beforeDestroy() {
-        clearInterval(this.intervalId);
-        clearInterval(this.highlightInterval);
-    },
-    methods: {
-        async getPersonMaps() {
-            try {
-                const response = await fetch(`LocationTrackingapi.php`);
-                if (response.ok) {
-                    const data = await response.json();
-                    this.Users = data.location;
+//         // Start cycling through users every 20 seconds
+//         this.highlightInterval = setInterval(() => {
+//             this.highlightNextUser();
+//         }, 20 * 1000);
+//     },
+//     beforeDestroy() {
+//         clearInterval(this.intervalId);
+//         clearInterval(this.highlightInterval);
+//     },
+//     methods: {
+//         async getPersonMaps() {
+//             try {
+//                 const response = await fetch(`LocationTrackingapi.php`);
+//                 if (response.ok) {
+//                     const data = await response.json();
+//                     this.Users = data.location;
 
-                    mapkit.init({
-                        authorizationCallback: function (done) {
-                            done(data.JWT);
-                        }
-                    });
+//                     mapkit.init({
+//                         authorizationCallback: function (done) {
+//                             done(data.JWT);
+//                         }
+//                     });
 
-                    // Initialize map if not already created
-                    if (!this.map) {
-                        this.map = new mapkit.Map("map");
-                        this.map.colorScheme = mapkit.Map.ColorSchemes.Dark;
-                        this.map.showsMapTypeControl = false;
-                        this.map.showsZoomControl = false;
-                        this.map.mapType = mapkit.Map.MapTypes.Hybrid;
-                    }
+//                     // Initialize map if not already created
+//                     if (!this.map) {
+//                         this.map = new mapkit.Map("map");
+//                         this.map.colorScheme = mapkit.Map.ColorSchemes.Dark;
+//                         this.map.showsMapTypeControl = false;
+//                         this.map.showsZoomControl = false;
+//                         this.map.mapType = mapkit.Map.MapTypes.Hybrid;
+//                     }
 
-                    // Clear existing annotations before adding new ones
-                    this.map.removeAnnotations(this.map.annotations);
+//                     // Clear existing annotations before adding new ones
+//                     this.map.removeAnnotations(this.map.annotations);
 
-                    // Add all users to the map
-                    this.Users.forEach(element => {
-                        this.addAnnotationToMap(element, data.localisedAddress);
-                    });
+//                     // Add all users to the map
+//                     this.Users.forEach(element => {
+//                         this.addAnnotationToMap(element, data.localisedAddress);
+//                     });
 
-                    // Adjust the map region
-                    // this.adjustMapRegion();
-                    this.highlightNextUser();
+//                     // Adjust the map region
+//                     // this.adjustMapRegion();
+//                     this.highlightNextUser();
 
-                } else {
-                    console.error('Error fetching personMaps:', response.status, response.statusText);
-                }
-            } catch (error) {
-                console.error('Error fetching personMaps:', error);
-            }
-        },
-        highlightNextUser() {
-            if (this.Users.length === 0) return;
+//                 } else {
+//                     console.error('Error fetching personMaps:', response.status, response.statusText);
+//                 }
+//             } catch (error) {
+//                 console.error('Error fetching personMaps:', error);
+//             }
+//         },
+//         highlightNextUser() {
+//             if (this.Users.length === 0) return;
 
-            // Increment index, loop back if at the end
-            this.currentUserIndex = (this.currentUserIndex + 1) % this.Users.length;
+//             // Increment index, loop back if at the end
+//             this.currentUserIndex = (this.currentUserIndex + 1) % this.Users.length;
 
-            // Highlight the user by zooming in on their location
-            const user = this.Users[this.currentUserIndex];
-            if (user && user.Location && user.Location.Location) {
-                const coordinate = new mapkit.Coordinate(
-                    user.Location.Location.latitude,
-                    user.Location.Location.longitude
-                );
+//             // Highlight the user by zooming in on their location
+//             const user = this.Users[this.currentUserIndex];
+//             if (user && user.Location && user.Location.Location) {
+//                 const coordinate = new mapkit.Coordinate(
+//                     user.Location.Location.latitude,
+//                     user.Location.Location.longitude
+//                 );
 
-                // Set region to focus on the highlighted user
-                const region = new mapkit.CoordinateRegion(
-                    coordinate,
-                    new mapkit.CoordinateSpan(0.0009, 0.0009) // Zoom in closer
-                );
+//                 // Set region to focus on the highlighted user
+//                 const region = new mapkit.CoordinateRegion(
+//                     coordinate,
+//                     new mapkit.CoordinateSpan(0.0009, 0.0009) // Zoom in closer
+//                 );
 
-                this.map.setRegionAnimated(region);
-            }
-        },
-        addAnnotationToMap(element, localisedNames) {
-            var annotation = new mapkit.MarkerAnnotation(
-                new mapkit.Coordinate(element.Location.Location.latitude, element.Location.Location.longitude)
-            );
-            annotation.color = element.color;
-            annotation.title = element.name;
-            annotation.subtitle = "person";
+//                 this.map.setRegionAnimated(region);
+//             }
+//         },
+//         addAnnotationToMap(element, localisedNames) {
+//             var annotation = new mapkit.MarkerAnnotation(
+//                 new mapkit.Coordinate(element.Location.Location.latitude, element.Location.Location.longitude)
+//             );
+//             annotation.color = element.color;
+//             annotation.title = element.name;
+//             annotation.subtitle = "person";
 
-            var geocoder = new mapkit.Geocoder({
-                language: "en-GB"
-            }).reverseLookup(annotation.coordinate, (err, data) => {
-                annotation.subtitle = LocaliseNames(data.results[0].name, localisedNames);
-            });
+//             var geocoder = new mapkit.Geocoder({
+//                 language: "en-GB"
+//             }).reverseLookup(annotation.coordinate, (err, data) => {
+//                 annotation.subtitle = LocaliseNames(data.results[0].name, localisedNames);
+//             });
 
-            if (element.imageurl) {
-                const imageDelegate = {
-                    getImageUrl(scale, callback) {
-                        callback(element.imageurl);
-                    }
-                };
-                annotation.glyphImage = imageDelegate;
-            }
+//             if (element.imageurl) {
+//                 const imageDelegate = {
+//                     getImageUrl(scale, callback) {
+//                         callback(element.imageurl);
+//                     }
+//                 };
+//                 annotation.glyphImage = imageDelegate;
+//             }
 
-            annotation.titleVisibility = mapkit.FeatureVisibility.Visible;
-            annotation.subtitleVisibility = mapkit.FeatureVisibility.Visible;
+//             annotation.titleVisibility = mapkit.FeatureVisibility.Visible;
+//             annotation.subtitleVisibility = mapkit.FeatureVisibility.Visible;
 
-            // Add annotation to map
-            this.map.addAnnotation(annotation);
+//             // Add annotation to map
+//             this.map.addAnnotation(annotation);
 
-            // Store annotation reference
-            element.annotation = annotation;
-        },
-        adjustMapRegion() {
-            if (this.Users.length === 0) return;
+//             // Store annotation reference
+//             element.annotation = annotation;
+//         },
+//         adjustMapRegion() {
+//             if (this.Users.length === 0) return;
 
-            let minLat = Infinity, maxLat = -Infinity, minLon = Infinity, maxLon = -Infinity;
+//             let minLat = Infinity, maxLat = -Infinity, minLon = Infinity, maxLon = -Infinity;
 
-            this.Users.forEach(user => {
-                const lat = user.Location.Location.latitude;
-                const lon = user.Location.Location.longitude;
+//             this.Users.forEach(user => {
+//                 const lat = user.Location.Location.latitude;
+//                 const lon = user.Location.Location.longitude;
 
-                if (lat < minLat) minLat = lat;
-                if (lat > maxLat) maxLat = lat;
-                if (lon < minLon) minLon = lon;
-                if (lon > maxLon) maxLon = lon;
-            });
+//                 if (lat < minLat) minLat = lat;
+//                 if (lat > maxLat) maxLat = lat;
+//                 if (lon < minLon) minLon = lon;
+//                 if (lon > maxLon) maxLon = lon;
+//             });
 
-            const centerLat = (minLat + maxLat) / 2;
-            const centerLon = (minLon + maxLon) / 2;
-            const spanLat = maxLat - minLat;
-            const spanLon = maxLon - minLon;
+//             const centerLat = (minLat + maxLat) / 2;
+//             const centerLon = (minLon + maxLon) / 2;
+//             const spanLat = maxLat - minLat;
+//             const spanLon = maxLon - minLon;
 
-            const region = new mapkit.CoordinateRegion(
-                new mapkit.Coordinate(centerLat, centerLon),
-                new mapkit.CoordinateSpan(spanLat * 1.09, spanLon * 1.09) // Adding some padding
-            );
+//             const region = new mapkit.CoordinateRegion(
+//                 new mapkit.Coordinate(centerLat, centerLon),
+//                 new mapkit.CoordinateSpan(spanLat * 1.09, spanLon * 1.09) // Adding some padding
+//             );
 
-            this.map.setRegionAnimated(region);
-        }
-    }
-});
+//             this.map.setRegionAnimated(region);
+//         }
+//     }
+// });
 
 
 function LocaliseNames(name, localisedNames) {
@@ -418,3 +460,4 @@ var calendarKey = new Vue({
         }
     }
 });
+

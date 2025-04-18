@@ -404,3 +404,61 @@ html, body {
     display: inline-block;
     margin-right: 10px;
 }
+
+.reporting-wrapper {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.4); /* more visible background */
+    border: 1px solid var(--forground);
+    border-radius: 12px;
+    color: var(--forground);
+    font-family: 'Inter', sans-serif;
+    z-index: 1; /* make sure it's above overlay */
+    position: relative;
+}
+
+.reporting-title {
+    font-size: 28px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    color: var(--forground);
+}
+
+.report-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.report-item {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    padding: 16px;
+    min-width: 220px;
+    flex: 1 1 300px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease;
+    font-size: 16px;
+}
+
+.report-item:hover {
+    transform: scale(1.02);
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.report-item strong {
+    font-size: 18px;
+    display: block;
+    color: var(--forground);
+    margin-bottom: 6px;
+}
+
+.report-item em {
+    font-style: normal;
+    font-size: 14px;
+    color: gray;
+}
