@@ -7,7 +7,7 @@ html, body {
 }
 
 body {
-    background-image: url("images/london2.jpeg");
+    background-image: url("images/IMG_7174.jpg");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -15,7 +15,7 @@ body {
 
 .overlay {
     z-index: 0;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0);
     position: absolute;
     top: 0;
     left: 0;
@@ -38,8 +38,8 @@ p {
 .reporting-wrapper {
     background: rgba(255, 255, 255, 0.08);
     border-radius: 12px;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
     padding: 15px;
@@ -105,12 +105,22 @@ p {
 /* === CALENDAR CELLS === */
 .calendar-day,
 .calendar-today {
-    text-align: left;
-    display: block;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+
     position: relative;
-    border-radius: 10px;
-    overflow: hidden;
+    display: block;
+    text-align: left;
+
+    padding: 15px 10px 45px 10px; /* increased bottom padding by 50px */
+    min-height: auto; /* dynamic height */
+    overflow: visible; /* allow content to flow naturally */
 }
+
 
 .calendar-day .title,
 .calendar-today .title {
@@ -162,9 +172,9 @@ p {
     padding: 0;
     text-align: left;
     position: relative;
-    top: 50px;
-    left: 5px;
-    width: 96%;
+    top: 20px;
+    left: 0px;
+    width: 100%;
 }
 
 .event-list li {
@@ -195,21 +205,32 @@ p {
 }
 
 .event-item-ALLDAY {
-    display: inline-block;
-    gap: 8px;
-    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 6px 0;
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.15s ease;
+}
+
+.event-item-ALLDAY:hover {
+    transform: scale(1.02);
 }
 
 .AllDay-class {
-    color: white;
-    padding: 6px 10px;
-    border-radius: 10px;
-    margin: 4px 0 4px 24px;
-    font-weight: 500;
-    font-size: 14px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-    width: fit-content;
-    display: inline-block;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--forground);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* === COLORS === */
