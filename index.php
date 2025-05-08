@@ -94,6 +94,12 @@
 
         </div>
 
+        <div id="eventPopup" class="event-popup" v-if="upcomingEvent">
+    <img :src="eventLogo" class="event-logo" />
+    <h1 class="event-title">{{ upcomingEvent.summary1 }}</h1>
+    <p class="event-details">{{ upcomingEvent.description }}</p>
+</div>
+
     </div>
 
 

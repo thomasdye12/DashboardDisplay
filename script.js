@@ -59,6 +59,8 @@ var calendar = new Vue({
         today: {
             events: []
         },
+        upcomingEvent: null,
+        eventLogo: 'images/IMG_8109.JPG',
 
     },
     computed: {
@@ -77,11 +79,16 @@ var calendar = new Vue({
         },1 * 60 * 60 * 1000);
 
         //  1 * 60 * 60 * 1000
+          // Check every 30 seconds for upcoming events
+    this.popupCheckInterval = setInterval(() => {
+        this.checkForUpcomingEvents();
+    }, 30 * 1000);
 
     },
     beforeDestroy() {
         // Clean up the interval when the Vue instance is destroyed
         clearInterval(this.intervalId);
+        clearInterval(this.popupCheckInterval);
     },
     methods: {
         async generateCalendar() {
@@ -170,6 +177,44 @@ var calendar = new Vue({
 
             // Return the CSS class based on the color key
             return colorClassMap[colorKey] || 'default-circle';
+        },
+        parseICalDate(icalString) {
+            // Example: "20250503T010000"
+            const year = parseInt(icalString.slice(0, 4));
+            const month = parseInt(icalString.slice(4, 6)) - 1; // JS months are 0-based
+            const day = parseInt(icalString.slice(6, 8));
+            const hour = parseInt(icalString.slice(9, 11));
+            const minute = parseInt(icalString.slice(11, 13));
+            return new Date(year, month, day, hour, minute);
+        },
+    
+        getUpcomingEvent(events, now = new Date()) {
+            const inFiveMins = new Date(now.getTime() + 30 * 60 * 1000);
+            for (let event of events) {
+                if (event.isAllDay || !event.dtstart) continue;
+    
+                const eventStart = this.parseICalDate(event.dtstart);
+                console.log('eventStart', eventStart);
+                if (eventStart > now && eventStart <= inFiveMins) {
+                    return event;
+                }
+            }
+    
+            return null;
+        },
+    
+        checkForUpcomingEvents() {
+            const nextEvent = this.getUpcomingEvent(this.today.events);
+    
+            if (nextEvent) {
+                this.upcomingEvent = nextEvent;
+    
+                setTimeout(() => {
+                    this.upcomingEvent = null;
+                }, 20000);
+            } else {
+                this.upcomingEvent = null;
+            }
         }
     }
 });
