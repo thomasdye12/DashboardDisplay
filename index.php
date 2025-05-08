@@ -95,26 +95,26 @@
         </div>
 
         <div id="eventPopup" class="event-popup" v-if="upcomingEvent">
-    <img :src="eventLogo" class="event-logo" />
-    <h1 class="event-title">{{ upcomingEvent.summary1 }}</h1>
-    <p class="event-details">{{ upcomingEvent.description }}</p>
-</div>
+            <img :src="eventLogo" class="event-logo" />
+            <h1 class="event-title">{{ upcomingEvent.summary1 }}</h1>
+            <p class="event-details">{{ upcomingEvent.description }}</p>
+        </div>
 
     </div>
 
 
-        <!-- Tasks To Do List -->
-        <div id="reporting-wrapper" class="reporting-wrapper">
-    <div v-if="ready">
-        <h2 class="reporting-title">House Tasks</h2>
-        <ul class="report-list">
-            <li class="report-item" v-for="report in filteredReports" :key="report.id">
-                <strong>{{ report.title }}</strong> - <em>{{ report.severity }}</em>
-            </li>
-        </ul>
-        <p v-if="filteredReports.length === 0">No tasks at the moment 🎉</p>
+    <!-- Tasks To Do List -->
+    <div id="reporting-wrapper" class="reporting-wrapper">
+        <div v-if="ready">
+            <h2 class="reporting-title">House Tasks</h2>
+            <ul class="report-list">
+                <li class="report-item" v-for="report in filteredReports" :key="report.id">
+                    <strong>{{ report.title }}</strong> - <em>{{ report.severity }}</em>
+                </li>
+            </ul>
+            <p v-if="filteredReports.length === 0">No tasks at the moment 🎉</p>
+        </div>
     </div>
-</div>
 
 
     <!-- locaton map of users -->
